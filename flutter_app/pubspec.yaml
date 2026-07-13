@@ -1,0 +1,32 @@
+name: gtec_canteen
+description: "GTEC Pure Veg Canteen Application"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^5.4.0
+  socket_io_client: ^2.0.3+1
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.9
+  flutter_local_notifications: ^16.3.0
+  cached_network_image: ^3.3.1
+  smooth_page_indicator: ^1.1.0
+  flutter_rating_bar: ^4.0.1
+  google_fonts: ^6.1.0
+  shimmer: ^3.0.0
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
