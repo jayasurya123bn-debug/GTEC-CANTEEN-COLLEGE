@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 import '../providers/auth_provider.dart';
 import '../utils/routes.dart';
 import '../utils/validators.dart';
@@ -32,8 +33,12 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
+        String errorMsg = e.toString();
+        if (e is DioException && e.response?.data != null) {
+          errorMsg = e.response?.data['error'] ?? 'Login failed';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: ${e.toString()}')),
+          SnackBar(content: Text(errorMsg)),
         );
       }
     } finally {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 import '../providers/auth_provider.dart';
 import '../utils/validators.dart';
 import '../config/theme.dart';
@@ -33,8 +34,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
+        String errorMsg = e.toString();
+        if (e is DioException && e.response?.data != null) {
+          errorMsg = e.response?.data['error'] ?? 'Registration failed';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: ${e.toString()}')),
+          SnackBar(content: Text(errorMsg)),
         );
       }
     } finally {
