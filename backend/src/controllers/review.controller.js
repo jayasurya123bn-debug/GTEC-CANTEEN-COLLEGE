@@ -1,4 +1,5 @@
-import { getReviewsByItemId, createReview, getAllReviews, updateReviewStatus, deleteReview as removeReview, updateItemRating } from '../models/review.model.js';
+import { getReviewsByItemId, createReview, getAllReviews, updateReviewStatus, deleteReview as removeReview } from '../models/review.model.js';
+import { updateItemRating } from '../models/menuItem.model.js';
 import { getIO } from '../services/socket.service.js';
 
 export const getReviews = async (req, res, next) => {
