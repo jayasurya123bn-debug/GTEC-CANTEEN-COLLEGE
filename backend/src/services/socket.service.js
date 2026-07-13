@@ -10,8 +10,7 @@ let ioInstance;
 
 export const setupSocket = (io) => {
   ioInstance = io;
-  const subClient = redisClient.duplicate();
-  io.adapter(createAdapter(redisClient, subClient));
+  // io.adapter(createAdapter(redisClient, subClient)); // Disabled for local run without Redis
 
   // Authentication Middleware
   io.use((socket, next) => {
