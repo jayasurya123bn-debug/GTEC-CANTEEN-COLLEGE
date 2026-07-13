@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 
 class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
@@ -10,7 +11,7 @@ class LocalNotificationService {
       iOS: DarwinInitializationSettings(),
     );
 
-    _plugin.initialize(initSettings);
+    _plugin.initialize(settings: initSettings);
   }
 
   static void display(RemoteMessage message) async {
@@ -28,10 +29,10 @@ class LocalNotificationService {
       );
 
       await _plugin.show(
-        id,
-        message.notification?.title,
-        message.notification?.body,
-        details,
+        id: id,
+        title: message.notification?.title,
+        body: message.notification?.body,
+        notificationDetails: details,
       );
     } on Exception catch (e) {
       print('Notification Error: $e');
