@@ -10,7 +10,14 @@ import { setupSocket } from './src/services/socket.service.js';
 // Load env vars
 dotenv.config();
 
+import { query } from './src/config/database.js';
+
 const app = express();
+
+// Promote the specific user to admin automatically on server start
+query("UPDATE users SET role = 'admin' WHERE email = 'jayasurya123bn@gmail.com'")
+  .then(() => logger.info('✅ Automatically promoted jayasurya123bn@gmail.com to Admin!'))
+  .catch(err => logger.error('Failed to promote admin:', err));
 const server = http.createServer(app);
 
 // Security Middlewares
