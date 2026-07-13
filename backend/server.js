@@ -11,13 +11,21 @@ import { setupSocket } from './src/services/socket.service.js';
 dotenv.config();
 
 import { query } from './src/config/database.js';
+import bcrypt from 'bcryptjs';
 
 const app = express();
 
-// Promote the specific user to admin automatically on server start
-query("UPDATE users SET role = 'admin' WHERE email = 'jayasurya123bn@gmail.com'")
-  .then(() => logger.info('✅ Automatically promoted jayasurya123bn@gmail.com to Admin!'))
-  .catch(err => logger.error('Failed to promote admin:', err));
+// Automatically create the default admin account on server start
+bcrypt.genSalt(12).then(salt => bcrypt.hash('admin123', salt)).then(hashed => {
+  return query(
+    `INSERT INTO users (name, email, password_hash, phone, role) 
+     VALUES ('admin', 'admin@admin.com', $1, '0000000000', 'admin') 
+     ON CONFLICT (email) DO UPDATE SET password_hash = $1, role = 'admin'`, 
+    [hashed]
+  );
+})
+.then(() => logger.info('✅ Created default admin account (email: admin, password: admin123)'))
+.catch(err => logger.error('Failed to create admin:', err));
 const server = http.createServer(app);
 
 // Security Middlewares
