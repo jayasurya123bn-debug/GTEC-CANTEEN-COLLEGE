@@ -13,6 +13,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'www.gtec.ac.in',
+      },
+      {
+        protocol: 'https',
+        hostname: 'encrypted-tbn0.gstatic.com',
       }
     ],
   },
