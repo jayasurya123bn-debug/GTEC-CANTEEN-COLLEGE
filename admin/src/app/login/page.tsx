@@ -54,7 +54,7 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 relative bg-white rounded-full p-2 shadow-sm border border-gray-200 flex items-center justify-center">
               <Image 
-                src="https://upload.wikimedia.org/wikipedia/en/thumb/4/41/GTEC_logo.png/220px-GTEC_logo.png"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm3g3mMzC7F1NuBc-kiDLH7NwnJzsqwOQfW6x-Vkd54g&s=10"
                 alt="GTEC Logo"
                 layout="fill"
                 objectFit="contain"

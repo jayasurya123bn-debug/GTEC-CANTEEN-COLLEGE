@@ -12,7 +12,7 @@ export default function Banner() {
         <div className="flex items-center space-x-3">
           <div className="relative w-8 h-8">
             <Image 
-              src="https://upload.wikimedia.org/wikipedia/en/thumb/4/41/GTEC_logo.png/220px-GTEC_logo.png"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm3g3mMzC7F1NuBc-kiDLH7NwnJzsqwOQfW6x-Vkd54g&s=10"
               alt="GTEC Logo"
               layout="fill"
               objectFit="contain"
