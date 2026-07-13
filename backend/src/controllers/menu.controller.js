@@ -1,7 +1,8 @@
 import { 
-  getMenuItems, getCategoryWithCounts, getMenuItemById, 
+  getMenuItems, getMenuItemById, 
   createMenuItem, updateMenuItem, updateAvailability, deleteMenuItem 
 } from '../models/menuItem.model.js';
+import { getCategoryWithCounts } from '../models/menuCategory.model.js';
 import { getScheduledMenu, scheduleItem } from '../models/scheduledMenu.model.js';
 import { getUsersWhoFavourited } from '../models/favourite.model.js';
 import { sendMulticastPushNotification } from '../services/fcm.service.js';
