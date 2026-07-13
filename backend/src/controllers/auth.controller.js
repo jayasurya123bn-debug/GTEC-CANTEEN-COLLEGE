@@ -55,7 +55,7 @@ export const refresh = async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
     
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'fallback_super_refresh_key_123', (err, decoded) => {
       if (err) {
         return res.status(401).json({ error: 'Invalid refresh token' });
       }

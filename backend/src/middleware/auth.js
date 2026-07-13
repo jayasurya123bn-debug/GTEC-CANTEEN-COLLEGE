@@ -12,7 +12,7 @@ export const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access token missing' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET || 'fallback_super_secret_key_123', (err, user) => {
     if (err) {
       logger.warn(`JWT verification failed: ${err.message}`);
       return res.status(401).json({ error: 'Invalid or expired token' });

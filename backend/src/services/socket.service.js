@@ -21,7 +21,7 @@ export const setupSocket = (io) => {
 
     const actualToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
 
-    jwt.verify(actualToken, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(actualToken, process.env.JWT_SECRET || 'fallback_super_secret_key_123', (err, decoded) => {
       if (err) {
         return next(new Error('Authentication error: Invalid token'));
       }
