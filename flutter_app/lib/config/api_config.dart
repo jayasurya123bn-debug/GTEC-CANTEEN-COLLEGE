@@ -1,6 +1,6 @@
 class ApiConfig {
-  static const String baseUrl = 'http://10.0.2.2:4000/api/v1'; // Emulator localhost
-  static const String socketUrl = 'http://10.0.2.2:4000';
+  static const String baseUrl = 'https://gtec-canteen-college.onrender.com/api/v1';
+  static const String socketUrl = 'https://gtec-canteen-college.onrender.com';
   
   // Endpoints
   static const String login = '/auth/login';
