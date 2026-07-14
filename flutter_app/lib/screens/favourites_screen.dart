@@ -4,6 +4,7 @@ import '../providers/favourite_provider.dart';
 import '../models/menu_item_model.dart';
 import '../widgets/menu_item_card.dart';
 import '../config/theme.dart';
+import '../utils/routes.dart';
 
 class FavouritesScreen extends StatefulWidget {
   const FavouritesScreen({super.key});

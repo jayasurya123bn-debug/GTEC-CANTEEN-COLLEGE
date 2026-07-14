@@ -6,6 +6,7 @@ import '../providers/favourite_provider.dart';
 import '../widgets/gtec_app_bar.dart';
 import '../widgets/gtec_banner.dart';
 import '../widgets/canteen_status_banner.dart';
+import '../utils/routes.dart';
 import '../widgets/menu_item_card.dart';
 import '../config/theme.dart';
 
