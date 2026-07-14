@@ -9,8 +9,8 @@ const router = express.Router(); // Note: mounted at /api/v1/reviews but we migh
 // Public
 router.get('/menu/:id', getReviews); // Mounts to /api/v1/reviews/menu/:id
 
-// Student
-router.post('/menu/:id', authenticateToken, requireRole(['student']), validateRequest(reviewSchema), submitReview);
+// Student / User
+router.post('/menu/:id', authenticateToken, requireRole(['student', 'user']), validateRequest(reviewSchema), submitReview);
 
 // Admin
 router.get('/', authenticateToken, requireRole(['admin']), listAllReviews);
