@@ -21,12 +21,12 @@ export default function DownloadPage() {
             When installing the APK, your phone might ask for permission to "Install from Unknown Sources". Please allow this to install the GTEC app.
           </div>
           
-          <Link href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/admin/public/gtec-canteen.apk" className="w-full block">
+          <a href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/admin/public/gtec-canteen.apk" download="gtec-canteen.apk" className="w-full block">
             <button className="w-full flex items-center justify-center h-16 text-lg font-bold text-white rounded-xl bg-green-600 hover:bg-green-700 shadow-lg transition-transform hover:scale-105 cursor-pointer">
               <Download className="mr-2 h-6 w-6" />
               Download APK Now
             </button>
-          </Link>
+          </a>
         </div>
       </div>
       
