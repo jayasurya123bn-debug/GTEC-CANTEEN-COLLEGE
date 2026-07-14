@@ -7,6 +7,7 @@ import '../screens/favourites_screen.dart';
 import '../screens/orders_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/notifications_screen.dart';
+import '../screens/item_details_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -17,6 +18,7 @@ class AppRoutes {
   static const String orders = '/orders';
   static const String profile = '/profile';
   static const String notifications = '/notifications';
+  static const String itemDetails = '/item-details';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -27,15 +29,19 @@ class AppRoutes {
       case register:
         return _slideRoute(const RegisterScreen());
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return _slideRoute(const HomeScreen());
+      case profile:
+        return _slideRoute(const ProfileScreen());
       case favourites:
         return _slideRoute(const FavouritesScreen());
       case orders:
         return _slideRoute(const OrdersScreen());
-      case profile:
-        return _slideRoute(const ProfileScreen());
       case notifications:
         return _slideRoute(const NotificationsScreen());
+      case itemDetails:
+        final args = settings.arguments;
+        // In a real app we'd cast to MenuItemModel properly but for now assume it's passed
+        return _slideRoute(ItemDetailsScreen(item: args as dynamic));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

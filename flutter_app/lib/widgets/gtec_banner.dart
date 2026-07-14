@@ -1,32 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../config/constants.dart';
 import '../config/theme.dart';
 
 class GtecBanner extends StatelessWidget {
   const GtecBanner({super.key});
 
+  Future<void> _launchGallery() async {
+    final Uri url = Uri.parse('http://www.gtec.ac.in/gallery.php');
+    if (!await launchUrl(url)) {
+      debugPrint('Could not launch $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 200,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          )
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            CachedNetworkImage(
+    return GestureDetector(
+      onTap: _launchGallery,
+      child: Container(
+        height: 200,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
               imageUrl: AppConstants.bannerUrl,
               fit: BoxFit.cover,
               placeholder: (context, url) => Container(color: Colors.grey[300]),

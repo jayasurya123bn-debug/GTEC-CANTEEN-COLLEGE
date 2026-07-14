@@ -58,7 +58,11 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
                 return MenuItemCard(
                   item: itemModel,
                   onTap: () {
-                    // Navigate to details
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.itemDetails,
+                      arguments: itemModel,
+                    );
                   },
                 );
               },

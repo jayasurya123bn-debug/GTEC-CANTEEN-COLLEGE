@@ -64,7 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               return MenuItemCard(
                                 item: item,
                                 onTap: () {
-                                  // Navigate to item details page (TODO)
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.itemDetails,
+                                    arguments: item,
+                                  );
                                 },
                               );
                             },
