@@ -9,9 +9,9 @@ const router = express.Router();
 
 router.use(authenticateToken);
 
-// Student
-router.post('/', requireRole(['student']), orderLimiter, validateRequest(orderSchema), createOrder);
-router.get('/', requireRole(['student']), getMyOrders);
+// Student and Admin
+router.post('/', requireRole(['student', 'user', 'admin']), orderLimiter, validateRequest(orderSchema), createOrder);
+router.get('/', requireRole(['student', 'user', 'admin']), getMyOrders);
 
 // Both Student and Admin
 router.get('/:id', getOrder);

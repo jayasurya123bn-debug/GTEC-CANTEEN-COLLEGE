@@ -4,7 +4,7 @@ import { authenticateToken, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.use(authenticateToken, requireRole(['student']));
+router.use(authenticateToken, requireRole(['student', 'user', 'admin']));
 
 router.get('/', listFavourites);
 router.post('/:itemId', addFav);
