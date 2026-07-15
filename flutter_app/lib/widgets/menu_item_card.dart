@@ -5,6 +5,7 @@ import '../models/menu_item_model.dart';
 import '../config/theme.dart';
 import '../utils/helpers.dart';
 import '../providers/favourite_provider.dart';
+import '../providers/pre_order_provider.dart';
 import 'veg_badge.dart';
 
 class MenuItemCard extends StatelessWidget {
@@ -82,6 +83,29 @@ class MenuItemCard extends StatelessWidget {
                         ),
                         _buildAvailabilityBadge(),
                       ],
+                    ),
+                    // Pre-Order shortcut button — shown when a meal slot is active
+                    Consumer<PreOrderProvider>(
+                      builder: (context, preOrderProvider, _) {
+                        final slotActive = preOrderProvider.currentSlot != null;
+                        if (!slotActive) return const SizedBox.shrink();
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: OutlinedButton.icon(
+                            onPressed: () => Navigator.pushNamed(context, '/pre-order'),
+                            icon: const Icon(Icons.shopping_bag_outlined, size: 13),
+                            label: const Text('Pre-Order', style: TextStyle(fontSize: 11)),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.primaryGreen,
+                              side: const BorderSide(color: AppTheme.primaryGreen),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

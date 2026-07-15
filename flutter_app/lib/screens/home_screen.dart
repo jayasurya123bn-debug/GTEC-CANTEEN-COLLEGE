@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/canteen_status_provider.dart';
 import '../providers/favourite_provider.dart';
+import '../providers/pre_order_provider.dart';
 import '../widgets/gtec_app_bar.dart';
 import '../widgets/gtec_banner.dart';
 import '../widgets/canteen_status_banner.dart';
+import '../widgets/now_serving_banner.dart';
 import '../utils/routes.dart';
 import '../widgets/menu_item_card.dart';
 import '../config/theme.dart';
@@ -25,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<CanteenStatusProvider>(context, listen: false).fetchStatus();
       Provider.of<MenuProvider>(context, listen: false).fetchMenu();
       Provider.of<FavouriteProvider>(context, listen: false).fetchFavourites();
+      // Refresh slot status for NowServingBanner
+      Provider.of<PreOrderProvider>(context, listen: false).refreshSlotStatus();
     });
   }
 
@@ -48,6 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CustomScrollView(
               slivers: [
                 const SliverToBoxAdapter(child: CanteenStatusBanner()),
+                // Now Serving banner — shows when a meal slot is active
+                const SliverToBoxAdapter(child: NowServingBanner()),
                 const SliverToBoxAdapter(child: GtecBanner()),
                 ...menuProvider.categories.map((category) {
                   return SliverMainAxisGroup(

@@ -61,6 +61,8 @@ import favouriteRoutes from './src/routes/favourite.routes.js';
 import orderRoutes from './src/routes/order.routes.js';
 import notificationRoutes from './src/routes/notification.routes.js';
 import adminRoutes from './src/routes/admin.routes.js';
+import preOrderRoutes from './src/routes/preOrder.routes.js';
+import adminPreOrderRoutes from './src/routes/adminPreOrder.routes.js';
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/canteen', canteenRoutes);
@@ -68,8 +70,13 @@ app.use('/api/v1/menu', menuRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/favourites', favouriteRoutes);
 app.use('/api/v1/orders', orderRoutes);
+// Pre-order student routes: /api/v1/pre-order/available, /api/v1/pre-order/slot-status, etc.
+// Note: my-tokens and token-receipt use the same router mounted at /api/v1/pre-order
+app.use('/api/v1/pre-order', preOrderRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
+// Existing admin routes + new pre-order admin routes (both use /api/v1/admin prefix)
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/admin', adminPreOrderRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

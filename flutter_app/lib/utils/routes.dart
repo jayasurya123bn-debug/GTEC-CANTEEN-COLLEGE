@@ -8,17 +8,21 @@ import '../screens/orders_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/notifications_screen.dart';
 import '../screens/item_details_screen.dart';
+import '../screens/pre_order_screen.dart';
+import '../screens/my_tokens_screen.dart';
 
 class AppRoutes {
-  static const String splash = '/';
-  static const String login = '/login';
-  static const String register = '/register';
-  static const String home = '/home';
-  static const String favourites = '/favourites';
-  static const String orders = '/orders';
-  static const String profile = '/profile';
+  static const String splash        = '/';
+  static const String login         = '/login';
+  static const String register      = '/register';
+  static const String home          = '/home';
+  static const String favourites    = '/favourites';
+  static const String orders        = '/orders';
+  static const String profile       = '/profile';
   static const String notifications = '/notifications';
-  static const String itemDetails = '/item-details';
+  static const String itemDetails   = '/item-details';
+  static const String preOrder      = '/pre-order';
+  static const String myTokens      = '/my-tokens';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -38,9 +42,12 @@ class AppRoutes {
         return _slideRoute(const OrdersScreen());
       case notifications:
         return _slideRoute(const NotificationsScreen());
+      case preOrder:
+        return _slideRoute(const PreOrderScreen());
+      case myTokens:
+        return _slideRoute(const MyTokensScreen());
       case itemDetails:
         final args = settings.arguments;
-        // In a real app we'd cast to MenuItemModel properly but for now assume it's passed
         return _slideRoute(ItemDetailsScreen(item: args as dynamic));
       default:
         return MaterialPageRoute(
