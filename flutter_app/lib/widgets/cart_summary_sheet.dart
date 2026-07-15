@@ -283,7 +283,7 @@ class _CartSummarySheetState extends State<CartSummarySheet> {
                                       '#$tokenStart – #$tokenEnd',
                                       style: const TextStyle(
                                         fontSize: 20,
-                                        fontWeight: FontWeight.black,
+                                        fontWeight: FontWeight.w900,
                                         color: AppTheme.darkGreen,
                                       ),
                                     ),

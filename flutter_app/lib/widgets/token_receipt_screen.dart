@@ -257,7 +257,7 @@ class TokenReceiptScreen extends StatelessWidget {
                           '₹${receipt.totalAmount.toStringAsFixed(0)}',
                           style: const TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.black,
+                            fontWeight: FontWeight.w900,
                             color: AppTheme.primaryGreen,
                           ),
                         ),

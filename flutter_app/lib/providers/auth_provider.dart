@@ -50,4 +50,12 @@ class AuthProvider with ChangeNotifier {
     SocketService.disconnect();
     notifyListeners();
   }
+
+  Future<void> refreshUser() async {
+    final updatedUser = await AuthService.getMe();
+    if (updatedUser != null) {
+      _user = updatedUser;
+      notifyListeners();
+    }
+  }
 }
