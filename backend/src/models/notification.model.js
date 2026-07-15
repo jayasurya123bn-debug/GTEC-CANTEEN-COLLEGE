@@ -9,6 +9,13 @@ export const createNotification = async (userId, title, body, type, data = {}) =
   return result.rows[0];
 };
 
+export const createGlobalNotification = async (title, body, type, data = {}) => {
+  await query(`
+    INSERT INTO notifications (user_id, title, body, type, data)
+    SELECT id, $1, $2, $3, $4 FROM users
+  `, [title, body, type, JSON.stringify(data)]);
+};
+
 export const getUserNotifications = async (userId, limit = 20, offset = 0) => {
   const result = await query(`
     SELECT * FROM notifications

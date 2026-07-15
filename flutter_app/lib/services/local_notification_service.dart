@@ -38,4 +38,29 @@ class LocalNotificationService {
       print('Notification Error: $e');
     }
   }
+
+  static void displaySimple(String title, String body) async {
+    try {
+      final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      
+      const NotificationDetails details = NotificationDetails(
+        android: AndroidNotificationDetails(
+          'gtec_canteen',
+          'GTEC Canteen Notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          color: Color(0xFF2E7D32),
+        ),
+      );
+
+      await _plugin.show(
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: details,
+      );
+    } on Exception catch (e) {
+      print('Notification Error: $e');
+    }
+  }
 }

@@ -2,6 +2,7 @@ import {
   getMenuItems, getMenuItemById, 
   createMenuItem, updateMenuItem, updateAvailability, deleteMenuItem 
 } from '../models/menuItem.model.js';
+import { createGlobalNotification } from '../models/notification.model.js';
 import { getCategoryWithCounts } from '../models/menuCategory.model.js';
 import { getScheduledMenu, scheduleItem } from '../models/scheduledMenu.model.js';
 import { getUsersWhoFavourited } from '../models/favourite.model.js';
@@ -70,6 +71,14 @@ export const createMenu = async (req, res, next) => {
     
     getIO().emit('menu:itemCreated', item);
     
+    // Broadcast notification for new item
+    await createGlobalNotification(
+      'New Item Added! 🎉', 
+      `${item.name} is now available in the canteen.`, 
+      'menu_update', 
+      { itemId: item.id }
+    );
+    
     res.status(201).json({ message: 'Item created', item });
   } catch (error) {
     next(error);
@@ -117,6 +126,23 @@ export const changeAvailability = async (req, res, next) => {
           { type: 'item_available', itemId: item.id }
         );
       }
+    }
+
+    // Global Notification Logic for sold out and limited
+    if (availability === 'sold_out' && oldItem.availability !== 'sold_out') {
+      await createGlobalNotification(
+        'Item Sold Out! ⚠️', 
+        `${item.name} is currently sold out.`, 
+        'menu_update', 
+        { itemId: item.id }
+      );
+    } else if (availability === 'limited' && oldItem.availability !== 'limited') {
+      await createGlobalNotification(
+        'Limited Stock! ⏳', 
+        `Only a few portions of ${item.name} are left.`, 
+        'menu_update', 
+        { itemId: item.id }
+      );
     }
 
     res.status(200).json({ message: 'Availability updated', item });
