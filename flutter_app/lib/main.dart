@@ -13,6 +13,7 @@ import 'providers/favourite_provider.dart';
 import 'providers/order_provider.dart';
 import 'providers/review_provider.dart';
 import 'providers/notification_provider.dart';
+import 'providers/pre_order_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => ReviewProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => PreOrderProvider()),
       ],
       child: const GtecCanteenApp(),
     ),

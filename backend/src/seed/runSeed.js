@@ -11,10 +11,17 @@ const runSeed = async () => {
   const client = await getClient();
   try {
     const sqlPath = path.join(__dirname, '../../../docs/database_schema.sql');
+    const preOrderSqlPath = path.join(__dirname, '../../../docs/pre_order_migration.sql');
     const sql = fs.readFileSync(sqlPath, 'utf8');
+    const preOrderSql = fs.readFileSync(preOrderSqlPath, 'utf8');
     
     logger.info('Starting database migration and seed...');
     await client.query(sql);
+    logger.info('Applied database_schema.sql');
+    
+    await client.query(preOrderSql);
+    logger.info('Applied pre_order_migration.sql');
+    
     logger.info('Database seeded successfully! 🌿');
     
   } catch (err) {
