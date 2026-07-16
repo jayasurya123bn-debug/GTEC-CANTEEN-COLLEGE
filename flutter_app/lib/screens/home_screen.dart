@@ -20,6 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _searchQuery = '';
+  String _selectedCategory = 'All';
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +58,65 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Now Serving banner — shows when a meal slot is active
                 const SliverToBoxAdapter(child: NowServingBanner()),
                 const SliverToBoxAdapter(child: GtecBanner()),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Search for snacks, lunch, dinner...',
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              'All',
+                              ...menuProvider.categories.map((c) => c.category)
+                            ].map((categoryName) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ChoiceChip(
+                                  label: Text(categoryName),
+                                  selected: _selectedCategory == categoryName,
+                                  selectedColor: AppTheme.primaryGreen.withOpacity(0.2),
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      _selectedCategory = categoryName;
+                                    });
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 ...menuProvider.categories.map((category) {
+                  final filteredItems = category.items.where((item) {
+                    final matchesSearch = item.name.toLowerCase().contains(_searchQuery.toLowerCase()) || 
+                        (item.description?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+                    final matchesCategory = _selectedCategory == 'All' || category.category == _selectedCategory;
+                    return matchesSearch && matchesCategory;
+                  }).toList();
+
+                  if (filteredItems.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
+
                   return SliverMainAxisGroup(
                     slivers: [
                       SliverPersistentHeader(
@@ -67,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         sliver: SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
-                              final item = category.items[index];
+                              final item = filteredItems[index];
                               return MenuItemCard(
                                 item: item,
                                 onTap: () {
@@ -79,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               );
                             },
-                            childCount: category.items.length,
+                            childCount: filteredItems.length,
                           ),
                         ),
                       ),
