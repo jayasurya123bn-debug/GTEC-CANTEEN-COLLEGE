@@ -8,34 +8,21 @@ class VegBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isVegan = dietaryTag.toLowerCase() == 'vegan';
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppTheme.lightGreen,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.3)),
+        color: AppTheme.primaryGreen.withOpacity(0.20),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.primaryGreen.withOpacity(0.4), width: 1),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryGreen,
-              shape: dietaryTag == 'vegan' ? BoxShape.circle : BoxShape.rectangle,
-            ),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            dietaryTag == 'vegan' ? 'Vegan' : 'Veg',
-            style: const TextStyle(
-              color: AppTheme.primaryGreen,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+      child: Text(
+        isVegan ? '🌱 Vegan' : '🌿 Veg',
+        style: const TextStyle(
+          color: AppTheme.primaryGreen,
+          fontWeight: FontWeight.bold,
+          fontSize: 10,
+        ),
       ),
     );
   }

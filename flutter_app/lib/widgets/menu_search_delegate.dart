@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/menu_item_model.dart';
 import '../providers/menu_provider.dart';
 import '../utils/routes.dart';
@@ -11,24 +12,30 @@ class MenuSearchDelegate extends SearchDelegate<MenuItemModel?> {
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: AppTheme.darkGreen),
+        backgroundColor: AppTheme.card,
+        elevation: 0,
+        iconTheme: IconThemeData(color: AppTheme.white),
       ),
-      inputDecorationTheme: const InputDecorationTheme(
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: GoogleFonts.poppins(color: AppTheme.muted, fontSize: 15),
         border: InputBorder.none,
+      ),
+      textTheme: TextTheme(
+        titleLarge: GoogleFonts.poppins(color: AppTheme.white, fontSize: 15),
       ),
     );
   }
+
+  @override
+  String get searchFieldLabel => 'Search pure veg dishes...';
 
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
       if (query.isNotEmpty)
         IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            query = '';
-          },
+          icon: const Icon(Icons.clear, color: AppTheme.bodyText),
+          onPressed: () => query = '',
         ),
     ];
   }
@@ -36,57 +43,80 @@ class MenuSearchDelegate extends SearchDelegate<MenuItemModel?> {
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, null);
-      },
+      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppTheme.white, size: 18),
+      onPressed: () => close(context, null),
     );
   }
 
   @override
-  Widget buildResults(BuildContext context) {
-    return _buildSearchResults(context);
-  }
+  Widget buildResults(BuildContext context) => _buildSearchResults(context);
 
   @override
-  Widget buildSuggestions(BuildContext context) {
-    return _buildSearchResults(context);
-  }
+  Widget buildSuggestions(BuildContext context) => _buildSearchResults(context);
 
   Widget _buildSearchResults(BuildContext context) {
-    final menuProvider = Provider.of<MenuProvider>(context, listen: false);
-    final allItems = menuProvider.categories.expand((c) => c.items).toList();
-    
-    final results = allItems.where((item) {
-      final nameLower = item.name.toLowerCase();
-      final descLower = item.description?.toLowerCase() ?? '';
-      final queryLower = query.toLowerCase();
-      return nameLower.contains(queryLower) || descLower.contains(queryLower);
-    }).toList();
-
-    if (results.isEmpty) {
-      return const Center(
-        child: Text('No items found.'),
+    if (query.trim().isEmpty) {
+      return Container(
+        color: AppTheme.background,
+        child: const Center(
+          child: Text(
+            '🌿 Type to search the menu...',
+            style: TextStyle(color: AppTheme.bodyText, fontSize: 14),
+          ),
+        ),
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        final item = results[index];
-        return MenuItemCard(
-          item: item,
-          onTap: () {
-            close(context, null);
-            Navigator.pushNamed(
-              context,
-              AppRoutes.itemDetails,
-              arguments: item,
-            );
-          },
-        );
-      },
+    final menuProvider = Provider.of<MenuProvider>(context, listen: false);
+    final lq = query.toLowerCase();
+    final results = menuProvider.allItems.where((item) {
+      return item.name.toLowerCase().contains(lq) ||
+          (item.description?.toLowerCase().contains(lq) ?? false) ||
+          item.categoryName.toLowerCase().contains(lq);
+    }).toList();
+
+    if (results.isEmpty) {
+      return Container(
+        color: AppTheme.background,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('🔍', style: TextStyle(fontSize: 48)),
+              const SizedBox(height: 12),
+              const Text(
+                'No dishes found',
+                style: TextStyle(color: AppTheme.white, fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Try searching "Idli", "Dosa", or "Juice"',
+                style: const TextStyle(color: AppTheme.bodyText, fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      color: AppTheme.background,
+      child: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.72,
+        ),
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          return MenuItemCard(
+            item: results[index],
+            animationIndex: index,
+          );
+        },
+      ),
     );
   }
 }

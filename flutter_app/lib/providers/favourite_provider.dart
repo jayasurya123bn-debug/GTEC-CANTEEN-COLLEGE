@@ -1,61 +1,62 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../config/api_config.dart';
-import '../models/menu_item_model.dart';
 
 class FavouriteProvider with ChangeNotifier {
-  List<dynamic> _favourites = []; // We will store full item data for fav screen
-  Set<String> _favouriteIds = {};
+  final Set<String> _favouriteIds = {};
   bool _isLoading = false;
 
-  List<dynamic> get favourites => _favourites;
-  bool get isLoading => _isLoading;
+  Set<String> get favouriteIds => _favouriteIds;
+  bool get isLoading           => _isLoading;
 
-  bool isFavourited(String id) => _favouriteIds.contains(id);
+  bool isFavourite(String itemId) => _favouriteIds.contains(itemId);
 
   Future<void> fetchFavourites() async {
     _isLoading = true;
     notifyListeners();
+
     try {
       final res = await ApiService.client.get(ApiConfig.favourites);
-      _favourites = res.data['favourites'];
-      _favouriteIds = _favourites.map<String>((f) => f['item_id'].toString()).toSet();
+      final List<dynamic> data = res.data;
+      _favouriteIds.clear();
+      for (final item in data) {
+        final id = item['menu_item_id']?.toString() ?? item['id']?.toString();
+        if (id != null) _favouriteIds.add(id);
+      }
     } catch (e) {
-      print('Error fetching favourites: $e');
+      // Silently fail — favourites are a convenience feature
     }
+
     _isLoading = false;
     notifyListeners();
   }
 
   Future<void> toggleFavourite(String itemId) async {
-    final bool currentlyFavourited = isFavourited(itemId);
-    
-    // Optimistic Update
-    if (currentlyFavourited) {
+    final isCurrentlyFav = _favouriteIds.contains(itemId);
+
+    // Optimistic update
+    if (isCurrentlyFav) {
       _favouriteIds.remove(itemId);
-      _favourites.removeWhere((f) => f['item_id'] == itemId);
     } else {
       _favouriteIds.add(itemId);
     }
     notifyListeners();
 
     try {
-      if (currentlyFavourited) {
+      if (isCurrentlyFav) {
         await ApiService.client.delete('${ApiConfig.favourites}/$itemId');
       } else {
         await ApiService.client.post('${ApiConfig.favourites}/$itemId');
-        // We refetch to get the full item data for the fav screen
-        fetchFavourites();
       }
     } catch (e) {
-      // Revert on failure
-      if (currentlyFavourited) {
+      // Rollback on failure
+      if (isCurrentlyFav) {
         _favouriteIds.add(itemId);
       } else {
         _favouriteIds.remove(itemId);
       }
       notifyListeners();
-      throw Exception('Failed to update favourite');
     }
   }
 }

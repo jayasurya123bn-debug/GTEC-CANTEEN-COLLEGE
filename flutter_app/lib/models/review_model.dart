@@ -1,34 +1,27 @@
 class ReviewModel {
   final String id;
-  final String itemId;
-  final String? userName;
-  final String? itemName;
-  final int rating;
+  final String userName;
+  final double rating;
   final String? comment;
-  final bool isApproved;
   final DateTime createdAt;
 
   ReviewModel({
     required this.id,
-    required this.itemId,
-    this.userName,
-    this.itemName,
+    required this.userName,
     required this.rating,
     this.comment,
-    required this.isApproved,
     required this.createdAt,
   });
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
     return ReviewModel(
-      id: json['id'],
-      itemId: json['item_id'] ?? json['itemId'],
-      userName: json['user_name'] ?? json['userName'],
-      itemName: json['item_name'] ?? json['itemName'],
-      rating: json['rating'],
-      comment: json['comment'],
-      isApproved: json['is_approved'] ?? json['isApproved'] ?? false,
-      createdAt: DateTime.parse(json['created_at'] ?? json['createdAt']),
+      id:        json['id']?.toString() ?? '',
+      userName:  json['user_name'] ?? 'Student',
+      rating:    double.tryParse(json['rating']?.toString() ?? '0') ?? 0.0,
+      comment:   json['comment'],
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 }

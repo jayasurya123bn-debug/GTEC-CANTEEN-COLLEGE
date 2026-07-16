@@ -1,16 +1,23 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/menu_provider.dart';
 import '../providers/canteen_status_provider.dart';
 import '../providers/favourite_provider.dart';
-import '../providers/pre_order_provider.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/gtec_app_bar.dart';
-import '../widgets/canteen_status_banner.dart';
-import '../utils/routes.dart';
+import '../widgets/canteen_status_bar.dart';
+import '../widgets/now_serving_banner.dart';
+import '../widgets/category_chips.dart';
 import '../widgets/menu_item_card.dart';
+import '../widgets/menu_grid_shimmer.dart';
+import '../widgets/menu_search_delegate.dart';
 import '../config/theme.dart';
-import '../models/menu_item_model.dart';
+import '../config/constants.dart';
+import '../utils/routes.dart';
+import 'favourites_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +29,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  final List<Widget> _pages = const [
+    _HomeBody(),
+    FavouritesScreen(),
+    ProfileScreen(),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -29,234 +42,317 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<CanteenStatusProvider>(context, listen: false).fetchStatus();
       Provider.of<MenuProvider>(context, listen: false).fetchMenu();
       Provider.of<FavouriteProvider>(context, listen: false).fetchFavourites();
-      Provider.of<PreOrderProvider>(context, listen: false).refreshSlotStatus();
     });
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    
-    if (index == 2) {
-      Navigator.pushNamed(context, AppRoutes.profile);
-    }
-  }
-
-  IconData _getCategoryIcon(String categoryName) {
-    String lower = categoryName.toLowerCase();
-    if (lower.contains('snack')) return Icons.fastfood;
-    if (lower.contains('beverage') || lower.contains('drink')) return Icons.local_cafe;
-    if (lower.contains('south')) return Icons.rice_bowl;
-    if (lower.contains('north')) return Icons.restaurant;
-    if (lower.contains('tiffin')) return Icons.breakfast_dining;
-    return Icons.restaurant_menu;
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<AuthProvider>(context).user;
-    
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const GtecAppBar(),
-      body: Consumer<MenuProvider>(
-        builder: (context, menuProvider, child) {
-          if (menuProvider.isLoading) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.primaryGreen));
-          }
+      backgroundColor: AppTheme.background,
+      extendBody: true,
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppTheme.card.withOpacity(0.95),
+              border: const Border(top: BorderSide(color: AppTheme.border, width: 1)),
+            ),
+            child: BottomNavigationBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              currentIndex: _selectedIndex,
+              selectedItemColor: AppTheme.primaryGreen,
+              unselectedItemColor: AppTheme.muted,
+              onTap: (i) => setState(() => _selectedIndex = i),
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.restaurant_menu_rounded),
+                  label: 'Menu',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite_border_rounded),
+                  activeIcon: Icon(Icons.favorite_rounded),
+                  label: 'Favourites',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  activeIcon: Icon(Icons.person_rounded),
+                  label: 'Profile',
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-          if (menuProvider.categories.isEmpty) {
-            return const Center(child: Text('No menu items available right now.'));
-          }
+class _HomeBody extends StatelessWidget {
+  const _HomeBody();
 
-          // Flatten items for Popular/Recent
-          final allItems = menuProvider.categories.expand((c) => c.items).toList();
-          
-          // Popular (top rated)
-          final popularItems = List<MenuItemModel>.from(allItems)
-            ..sort((a, b) => b.avgRating.compareTo(a.avgRating));
-          
-          // Recent (reverse order)
-          final recentItems = List<MenuItemModel>.from(allItems.reversed);
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<AuthProvider>(context).user;
 
-          return RefreshIndicator(
-            onRefresh: () => menuProvider.fetchMenu(),
-            color: AppTheme.primaryGreen,
-            child: SingleChildScrollView(
-              child: Column(
+    return CustomScrollView(
+      slivers: [
+        // ── Frosted glass AppBar ─────────────────────────────────────────────
+        SliverAppBar(
+          pinned: true,
+          backgroundColor: AppTheme.background.withOpacity(0.85),
+          flexibleSpace: ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(color: Colors.transparent),
+            ),
+          ),
+          title: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppTheme.primaryGreen, width: 2),
+                ),
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: AppConstants.logoUrl,
+                    fit: BoxFit.cover,
+                    errorWidget: (_, __, ___) => const Icon(
+                      Icons.school_rounded,
+                      color: AppTheme.primaryGreen,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CanteenStatusBanner(),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Good morning ${user?.name ?? 'Student'}!',
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'Enjoy Pure Veg Delights Today',
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                        const SizedBox(height: 24),
-                        
-                        // Circular Categories
-                        SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: menuProvider.categories.length,
-                            itemBuilder: (context, index) {
-                              final cat = menuProvider.categories[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 24.0),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 65,
-                                      height: 65,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.primaryGreen.withOpacity(0.1),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        _getCategoryIcon(cat.category),
-                                        color: AppTheme.primaryGreen,
-                                        size: 32,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      cat.category,
-                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 24),
-                        
-                        // Popular Items Header
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Popular Items',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            TextButton(
-                              onPressed: () {},
-                              child: const Text('View all', style: TextStyle(color: AppTheme.primaryGreen)),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        
-                        // Popular Items List (Horizontal)
-                        SizedBox(
-                          height: 160,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: popularItems.length > 5 ? 5 : popularItems.length,
-                            itemBuilder: (context, index) {
-                              return SizedBox(
-                                width: 300,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 16.0),
-                                  child: MenuItemCard(
-                                    item: popularItems[index],
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        AppRoutes.itemDetails,
-                                        arguments: popularItems[index],
-                                      );
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 24),
-                        
-                        // Recent Items Header
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Recent Additions',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            TextButton(
-                              onPressed: () {},
-                              child: const Text('View all', style: TextStyle(color: AppTheme.primaryGreen)),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        
-                        // Recent Items List (Vertical)
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: recentItems.length > 5 ? 5 : recentItems.length,
-                          itemBuilder: (context, index) {
-                            return MenuItemCard(
-                              item: recentItems[index],
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.itemDetails,
-                                  arguments: recentItems[index],
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
+                  Text(
+                    'GTEC Canteen',
+                    style: GoogleFonts.poppins(
+                      color: AppTheme.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    'Pure Veg 🌿',
+                    style: GoogleFonts.poppins(
+                      color: AppTheme.primaryGreen,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
               ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search_rounded, color: AppTheme.white, size: 26),
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: MenuSearchDelegate(),
+                );
+              },
             ),
-          );
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: AppTheme.primaryGreen,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            IconButton(
+              icon: const Icon(Icons.notifications_none_rounded, color: AppTheme.white, size: 26),
+              onPressed: () => Navigator.pushNamed(context, AppRoutes.notifications),
+            ),
+            const SizedBox(width: 4),
+          ],
+        ),
+
+        // ── Greeting ────────────────────────────────────────────────────────
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hello, ${user?.name?.split(' ').first ?? 'Student'} 👋',
+                  style: GoogleFonts.poppins(
+                    color: AppTheme.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'What\'s on the menu today?',
+                  style: TextStyle(color: AppTheme.bodyText, fontSize: 14),
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
+        ),
+
+        // ── Canteen status bar ───────────────────────────────────────────────
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        const SliverToBoxAdapter(child: CanteenStatusBar()),
+
+        // ── Broadcast banner ─────────────────────────────────────────────────
+        const SliverToBoxAdapter(child: NowServingBanner()),
+
+        // ── Hero Campus Banner ───────────────────────────────────────────────
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: SizedBox(
+                height: 160,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: AppConstants.bannerUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(color: AppTheme.elevated),
+                      errorWidget: (_, __, ___) => Container(
+                        color: AppTheme.elevated,
+                        child: const Center(
+                          child: Icon(Icons.school_rounded,
+                              color: AppTheme.primaryGreen, size: 60),
+                        ),
+                      ),
+                    ),
+                    // Gradient overlay
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.transparent, Color(0xCC0D1117)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 16,
+                      left: 16,
+                      right: 16,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppConstants.fullName,
+                            style: GoogleFonts.poppins(
+                              color: AppTheme.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const Text(
+                            '🌿 Pure Veg Campus Canteen',
+                            style: TextStyle(
+                              color: AppTheme.primaryGreen,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+        ),
+
+        // ── Category Chips ───────────────────────────────────────────────────
+        const SliverToBoxAdapter(child: SizedBox(height: 20)),
+        const SliverToBoxAdapter(child: CategoryChips()),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+        // ── "Today's Menu" heading ───────────────────────────────────────────
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              "Today's Menu",
+              style: GoogleFonts.poppins(
+                color: AppTheme.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz),
-            label: 'More',
-          ),
-        ],
-      ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+        // ── Menu Grid ────────────────────────────────────────────────────────
+        Consumer<MenuProvider>(
+          builder: (context, menuProvider, _) {
+            if (menuProvider.isLoading) {
+              return const SliverToBoxAdapter(child: MenuGridShimmer());
+            }
+
+            if (menuProvider.items.isEmpty) {
+              return SliverToBoxAdapter(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(48),
+                    child: Column(
+                      children: [
+                        const Text('🌿', style: TextStyle(fontSize: 48)),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'No items found',
+                          style: TextStyle(
+                            color: AppTheme.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Try a different category or pull to refresh.',
+                          style: TextStyle(color: AppTheme.bodyText, fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
+              sliver: SliverGrid(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return MenuItemCard(
+                      item: menuProvider.items[index],
+                      animationIndex: index,
+                    );
+                  },
+                  childCount: menuProvider.items.length,
+                ),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.72,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
