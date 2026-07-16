@@ -119,6 +119,8 @@ class AppTheme {
         ),
       ),
     );
+  }
+
   static ThemeData get lightTheme {
     const Color lightBg = Color(0xFFF8F9FA);
     const Color lightCard = Color(0xFFFFFFFF);

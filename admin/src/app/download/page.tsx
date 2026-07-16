@@ -53,8 +53,8 @@ export default function DownloadPage() {
 
         {/* Download Button */}
         <a
-          href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/downloads/gtec-canteen.apk"
-          download="gtec-canteen.apk"
+          href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/releases/GTEC_Canteen_App.apk"
+          download="GTEC_Canteen_App.apk"
           className="block w-full"
         >
           <button
