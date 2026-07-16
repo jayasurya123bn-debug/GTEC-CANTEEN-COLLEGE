@@ -9,16 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#2E7D32',
-        accent: '#4CAF50',
+        primary: '#00E676', // Neon Green
+        accent: '#00E676',
+        background: '#0D1117', // Deep navy/black
+        card: '#161B22',      // Dark cards
+        elevated: '#1C2333',  // Elevated surfaces
+        border: '#30363D',    // Subtle borders
         veg: {
           50: '#E8F5E9',
-          100: '#C8E6C9',
-          200: '#A5D6A7',
+          100: 'rgba(0, 230, 118, 0.1)',
+          200: 'rgba(0, 230, 118, 0.2)',
           300: '#81C784',
           400: '#66BB6A',
-          500: '#4CAF50',
-          600: '#43A047',
+          500: '#00E676',
+          600: '#00C853',
           700: '#388E3C',
           800: '#2E7D32',
           900: '#1B5E20',

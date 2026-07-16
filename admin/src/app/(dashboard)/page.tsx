@@ -91,16 +91,16 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Overview</h1>
-        <div className="flex items-center space-x-4 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-          <span className="text-sm font-medium text-gray-700">Canteen Status:</span>
+        <h1 className="text-2xl font-bold text-white">Overview</h1>
+        <div className="flex items-center space-x-4 bg-card px-4 py-2 rounded-lg shadow-sm border border-border">
+          <span className="text-sm font-medium text-gray-400">Canteen Status:</span>
           <StatusToggle isOpen={canteenStatus.is_open} onChange={handleToggleStatus} />
           <span className={`text-sm font-bold ${canteenStatus.is_open ? 'text-primary' : 'text-gray-500'}`}>
             {canteenStatus.is_open ? 'OPEN' : 'CLOSED'}
           </span>
-          <div className="h-6 w-px bg-gray-300 mx-2"></div>
+          <div className="h-6 w-px bg-border mx-2"></div>
           <select 
-            className="text-sm border-gray-300 rounded-md focus:ring-primary focus:border-primary p-1"
+            className="text-sm border-border bg-background text-white rounded-md focus:ring-primary focus:border-primary p-1"
             value={canteenStatus.busyness}
             onChange={handleUpdateBusyness}
           >
@@ -112,65 +112,21 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatsCard title="Total Menu Items" value={stats?.total_items || 0} icon={Utensils} />
-        <StatsCard title="Orders Today" value={stats?.orders_today || 0} icon={ShoppingBag} />
-        <StatsCard title="Revenue Today" value={`₹${stats?.revenue_today || 0}`} icon={IndianRupee} />
         <StatsCard title="Average Rating" value={`${stats?.avg_rating || 0} / 5.0`} icon={Star} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Orders */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h2 className="text-lg font-bold text-gray-900">Recent Orders</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {recentOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">#{order.id.split('-')[0]}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.user_name || 'Student'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{order.total_amount}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                          order.status === 'ready' ? 'bg-green-100 text-green-800' : 
-                          order.status === 'completed' ? 'bg-gray-100 text-gray-800' : 
-                          'bg-blue-100 text-blue-800'}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-                {recentOrders.length === 0 && (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-4 text-center text-gray-500">No recent orders</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 gap-6">
         {/* Broadcast Message */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900">Broadcast Message</h2>
+        <div className="bg-card rounded-xl shadow-sm border border-border">
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-lg font-bold text-white">Broadcast Message</h2>
           </div>
           <div className="p-6">
-            <p className="text-sm text-gray-600 mb-4">Send a push notification and update the banner in the app for all students.</p>
+            <p className="text-sm text-gray-400 mb-4">Send a push notification and update the banner in the app for all students.</p>
             <textarea
-              className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-primary focus:border-primary"
+              className="w-full border border-border bg-background text-white rounded-lg p-3 text-sm focus:ring-primary focus:border-primary placeholder-gray-500"
               rows={4}
               placeholder="E.g., Special meals available today!"
               value={broadcastInput}
@@ -178,9 +134,10 @@ export default function Dashboard() {
             ></textarea>
             <button 
               onClick={handleSendBroadcast}
-              className="mt-4 w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-green-700"
+              className="mt-4 w-full md:w-auto flex justify-center items-center px-6 py-3 rounded-xl font-bold text-[#0D1117] bg-primary hover:bg-[#00C853] transition-colors"
+              style={{ boxShadow: "0 0 20px rgba(0,230,118,0.3)" }}
             >
-              <Send size={16} className="mr-2" />
+              <Send size={18} className="mr-2" />
               Broadcast Now
             </button>
           </div>

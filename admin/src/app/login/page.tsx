@@ -35,33 +35,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center">
+    <div className="min-h-screen relative flex items-center justify-center bg-[#0D1117]">
       {/* Background Banner */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="https://images.unsplash.com/photo-1562774053-701939374585?w=1200&h=400&fit=crop"
+          src="http://www.gtec.ac.in/images/college/1.jpg"
           alt="Campus Banner"
           layout="fill"
           objectFit="cover"
           priority
         />
-        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-[#0D1117]/80 backdrop-blur-sm"></div>
       </div>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <div className="p-8 text-center bg-veg-50 border-b border-gray-100">
+      <div className="relative z-10 w-full max-w-md bg-card rounded-2xl shadow-2xl overflow-hidden border border-border">
+        <div className="p-8 text-center bg-elevated border-b border-border">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 relative bg-white rounded-full p-2 shadow-sm border border-gray-200 flex items-center justify-center">
+            <div className="w-16 h-16 relative bg-card rounded-full p-1 shadow-sm border border-primary flex items-center justify-center overflow-hidden">
               <Image 
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm3g3mMzC7F1NuBc-kiDLH7NwnJzsqwOQfW6x-Vkd54g&s=10"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrTnuNmoXMfrv2kq0V8mxmPXDzx00wQFxedgi9ixZyRA&s=10"
                 alt="GTEC Logo"
                 layout="fill"
-                objectFit="contain"
+                objectFit="cover"
               />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Admin Login</h2>
+          <h2 className="text-2xl font-bold text-white">Admin Login</h2>
           <p className="text-primary font-medium mt-1 flex items-center justify-center">
             <Leaf size={16} className="mr-1" /> Pure Veg Canteen
           </p>
@@ -69,31 +69,32 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="p-8 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
             <input 
               type="email" 
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+              className="w-full px-4 py-3 rounded-lg border border-border bg-background text-white focus:ring-2 focus:ring-primary focus:border-primary transition-colors placeholder-gray-600"
               placeholder="admin@gtec.ac.in"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Password</label>
             <input 
               type="password" 
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+              className="w-full px-4 py-3 rounded-lg border border-border bg-background text-white focus:ring-2 focus:ring-primary focus:border-primary transition-colors placeholder-gray-600"
               placeholder="••••••••"
             />
           </div>
           <button 
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex justify-center items-center"
+            className="w-full bg-primary hover:bg-[#00C853] text-[#0D1117] font-bold py-3 px-4 rounded-lg transition-colors flex justify-center items-center"
+            style={{ boxShadow: "0 0 20px rgba(0,230,118,0.3)" }}
           >
             {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
           </button>
