@@ -57,19 +57,6 @@ class GtecCanteenApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       initialRoute: AppRoutes.splash,
       onGenerateRoute: AppRoutes.generateRoute,
-      builder: (context, child) {
-        return Container(
-          color: const Color(0xFF0D1117), // Match the dark background
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
-              child: ClipRRect(
-                child: child!,
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

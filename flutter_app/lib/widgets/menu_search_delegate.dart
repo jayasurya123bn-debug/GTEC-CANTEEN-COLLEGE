@@ -103,8 +103,8 @@ class MenuSearchDelegate extends SearchDelegate<MenuItemModel?> {
       color: AppTheme.background,
       child: GridView.builder(
         padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           childAspectRatio: 0.72,
