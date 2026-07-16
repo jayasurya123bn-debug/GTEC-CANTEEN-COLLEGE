@@ -5,6 +5,7 @@ import '../config/constants.dart';
 import '../utils/routes.dart';
 import '../providers/notification_provider.dart';
 import '../config/theme.dart';
+import 'menu_search_delegate.dart';
 
 class GtecAppBar extends StatelessWidget implements PreferredSizeWidget {
   const GtecAppBar({super.key});
@@ -31,6 +32,15 @@ class GtecAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        IconButton(
+          icon: const Icon(Icons.search, size: 28),
+          onPressed: () {
+            showSearch(
+              context: context,
+              delegate: MenuSearchDelegate(),
+            );
+          },
+        ),
         Consumer<NotificationProvider>(
           builder: (context, provider, child) {
             return IconButton(
