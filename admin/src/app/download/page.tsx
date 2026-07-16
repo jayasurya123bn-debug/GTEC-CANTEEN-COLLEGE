@@ -1,37 +1,90 @@
-import { Download, Smartphone } from "lucide-react";
-import Link from "next/link";
+'use client';
+import { Download, Smartphone, Star, Search, Heart, Info } from "lucide-react";
 
 export default function DownloadPage() {
   return (
-    <div className="min-h-screen bg-green-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-green-100 p-8">
-        <div className="text-center space-y-4">
-          <div className="mx-auto bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mb-4">
-            <Smartphone className="w-12 h-12 text-green-600" />
+    <div className="min-h-screen flex flex-col items-center justify-center p-4"
+      style={{ background: "linear-gradient(135deg, #0D1117 0%, #161B22 100%)" }}>
+      
+      {/* Card */}
+      <div className="w-full max-w-lg rounded-3xl p-8 border"
+        style={{ background: "#161B22", borderColor: "#30363D" }}>
+
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="mx-auto w-24 h-24 rounded-full flex items-center justify-center mb-5"
+            style={{ background: "rgba(0,230,118,0.10)", boxShadow: "0 0 30px rgba(0,230,118,0.25)", border: "2px solid #00E676" }}>
+            <Smartphone className="w-12 h-12" style={{ color: "#00E676" }} />
           </div>
-          <h1 className="text-3xl font-bold text-green-900">GTEC Canteen App</h1>
-          <p className="text-lg text-gray-600">
-            Download the official student app to view the live menu, order food, and get real-time updates!
+          <h1 className="text-3xl font-bold mb-2" style={{ color: "#FFFFFF" }}>
+            GTEC Canteen App
+          </h1>
+          <p className="text-base" style={{ color: "#8B949E" }}>
+            The official Pure Veg canteen app for students of<br />
+            <span style={{ color: "#00E676", fontWeight: 600 }}>Ganadipathy Tulsi Engineering College</span>
           </p>
         </div>
-        
-        <div className="space-y-6 mt-8">
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 text-sm text-blue-800 text-center">
-            <strong>Note for Android Users:</strong><br />
-            When installing the APK, your phone might ask for permission to "Install from Unknown Sources". Please allow this to install the GTEC app.
-          </div>
-          
-          <a href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/downloads/gtec-canteen.apk" download="gtec-canteen.apk" className="w-full block">
-            <button className="w-full flex items-center justify-center h-16 text-lg font-bold text-white rounded-xl bg-green-600 hover:bg-green-700 shadow-lg transition-transform hover:scale-105 cursor-pointer">
-              <Download className="mr-2 h-6 w-6" />
-              Download APK Now
-            </button>
-          </a>
+
+        {/* Feature Pills */}
+        <div className="grid grid-cols-2 gap-3 mb-8">
+          {[
+            { icon: <Search className="w-4 h-4" />, label: "Live Menu & Search" },
+            { icon: <Heart className="w-4 h-4" />, label: "Save Favourites" },
+            { icon: <Star className="w-4 h-4" />, label: "User Reviews" },
+            { icon: <Smartphone className="w-4 h-4" />, label: "Real-time Updates" },
+          ].map((f) => (
+            <div key={f.label} className="flex items-center gap-2 rounded-xl px-3 py-2"
+              style={{ background: "#21262D", border: "1px solid #30363D" }}>
+              <span style={{ color: "#00E676" }}>{f.icon}</span>
+              <span className="text-sm font-medium" style={{ color: "#FFFFFF" }}>{f.label}</span>
+            </div>
+          ))}
         </div>
+
+        {/* Info Note */}
+        <div className="rounded-xl p-4 mb-6 flex gap-3"
+          style={{ background: "rgba(0,230,118,0.08)", border: "1px solid rgba(0,230,118,0.25)" }}>
+          <Info className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: "#00E676" }} />
+          <div className="text-sm" style={{ color: "#8B949E" }}>
+            <span style={{ color: "#00E676", fontWeight: 700 }}>Android only.</span> When installing, if prompted with
+            &quot;Install from Unknown Sources&quot;, tap <b style={{ color: "#FFFFFF" }}>Allow</b> to install the GTEC app.
+          </div>
+        </div>
+
+        {/* Download Button */}
+        <a
+          href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/downloads/gtec-canteen.apk"
+          download="gtec-canteen.apk"
+          className="block w-full"
+        >
+          <button
+            className="w-full flex items-center justify-center gap-3 h-16 text-lg font-bold rounded-2xl transition-all duration-200 cursor-pointer"
+            style={{
+              background: "#00E676",
+              color: "#0D1117",
+              boxShadow: "0 0 24px rgba(0,230,118,0.40)",
+            }}
+            onMouseOver={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.02)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 36px rgba(0,230,118,0.60)";
+            }}
+            onMouseOut={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 24px rgba(0,230,118,0.40)";
+            }}
+          >
+            <Download className="w-6 h-6" />
+            Download APK — Free
+          </button>
+        </a>
+
+        <p className="text-center text-xs mt-4" style={{ color: "#484F58" }}>
+          Latest version · Pure Veg · No ordering required
+        </p>
       </div>
-      
-      <p className="mt-8 text-gray-500 text-sm text-center">
-        Powered by Ganadipathy Tulsi Engineering College
+
+      <p className="mt-6 text-sm text-center" style={{ color: "#484F58" }}>
+        © Ganadipathy Tulsi Engineering College · GTEC Pure Veg Canteen
       </p>
     </div>
   );
