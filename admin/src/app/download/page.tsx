@@ -46,37 +46,96 @@ export default function DownloadPage() {
           style={{ background: "rgba(0,230,118,0.08)", border: "1px solid rgba(0,230,118,0.25)" }}>
           <Info className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: "#00E676" }} />
           <div className="text-sm" style={{ color: "#8B949E" }}>
-            <span style={{ color: "#00E676", fontWeight: 700 }}>Android only.</span> When installing, if prompted with
-            &quot;Install from Unknown Sources&quot;, tap <b style={{ color: "#FFFFFF" }}>Allow</b> to install the GTEC app.
+            <span style={{ color: "#00E676", fontWeight: 700 }}>Available everywhere.</span> Android uses native APK. iOS, Windows, and Mac use our instant Web App.
           </div>
         </div>
 
-        {/* Download Button */}
-        <a
-          href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/releases/GTEC_Canteen_App.apk"
-          download="GTEC_Canteen_App.apk"
-          className="block w-full"
-        >
-          <button
-            className="w-full flex items-center justify-center gap-3 h-16 text-lg font-bold rounded-2xl transition-all duration-200 cursor-pointer"
-            style={{
-              background: "#00E676",
-              color: "#0D1117",
-              boxShadow: "0 0 24px rgba(0,230,118,0.40)",
-            }}
-            onMouseOver={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.02)";
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 36px rgba(0,230,118,0.60)";
-            }}
-            onMouseOut={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 24px rgba(0,230,118,0.40)";
-            }}
+        {/* Download Buttons */}
+        <div className="flex flex-col gap-4">
+          <a
+            href="https://raw.githubusercontent.com/jayasurya123bn-debug/GTEC-CANTEEN-COLLEGE/main/releases/GTEC_Canteen_App.apk"
+            download="GTEC_Canteen_App.apk"
+            className="block w-full"
           >
-            <Download className="w-6 h-6" />
-            Download APK — Free
-          </button>
-        </a>
+            <button
+              className="w-full flex items-center justify-center gap-3 h-14 text-base font-bold rounded-xl transition-all duration-200 cursor-pointer"
+              style={{
+                background: "#00E676",
+                color: "#0D1117",
+                boxShadow: "0 0 20px rgba(0,230,118,0.30)",
+              }}
+              onMouseOver={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.02)";
+              }}
+              onMouseOut={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
+              }}
+            >
+              <Smartphone className="w-5 h-5" />
+              Download APK (Android)
+            </button>
+          </a>
+
+          <a href="/app" className="block w-full">
+            <button
+              className="w-full flex items-center justify-center gap-3 h-14 text-base font-bold rounded-xl transition-all duration-200 cursor-pointer"
+              style={{
+                background: "#21262D",
+                color: "#FFFFFF",
+                border: "1px solid #30363D",
+              }}
+              onMouseOver={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.02)";
+              }}
+              onMouseOut={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
+              }}
+            >
+              <Smartphone className="w-5 h-5" />
+              Download for iOS (Web App)
+            </button>
+          </a>
+
+          <div className="grid grid-cols-2 gap-4">
+            <a href="/app" className="block w-full">
+              <button
+                className="w-full flex items-center justify-center gap-2 h-12 text-sm font-bold rounded-xl transition-all duration-200 cursor-pointer"
+                style={{
+                  background: "#21262D",
+                  color: "#FFFFFF",
+                  border: "1px solid #30363D",
+                }}
+                onMouseOver={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "#30363D";
+                }}
+                onMouseOut={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "#21262D";
+                }}
+              >
+                Download for Windows
+              </button>
+            </a>
+            
+            <a href="/app" className="block w-full">
+              <button
+                className="w-full flex items-center justify-center gap-2 h-12 text-sm font-bold rounded-xl transition-all duration-200 cursor-pointer"
+                style={{
+                  background: "#21262D",
+                  color: "#FFFFFF",
+                  border: "1px solid #30363D",
+                }}
+                onMouseOver={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "#30363D";
+                }}
+                onMouseOut={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = "#21262D";
+                }}
+              >
+                Download for Mac
+              </button>
+            </a>
+          </div>
+        </div>
 
         <p className="text-center text-xs mt-4" style={{ color: "#484F58" }}>
           Latest version · Pure Veg · No ordering required
