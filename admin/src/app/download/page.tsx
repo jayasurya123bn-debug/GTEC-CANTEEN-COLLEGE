@@ -1,5 +1,5 @@
 'use client';
-import { Download, Smartphone, Star, Search, Heart, Info } from "lucide-react";
+import { Smartphone, Star, Search, Heart, Info } from "lucide-react";
 
 export default function DownloadPage() {
   return (
