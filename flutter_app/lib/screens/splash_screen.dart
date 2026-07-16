@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import '../config/theme.dart';
 import '../utils/routes.dart';
 import '../config/constants.dart';
@@ -34,10 +36,24 @@ class _SplashScreenState extends State<SplashScreen>
 
     _ctrl.forward();
 
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (!mounted) return;
+    _initAuthAndNavigate();
+  }
+
+  Future<void> _initAuthAndNavigate() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    await Future.wait([
+      authProvider.checkAuth(),
+      Future.delayed(const Duration(milliseconds: 2500)),
+    ]);
+
+    if (!mounted) return;
+
+    if (authProvider.isAuthenticated) {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else {
       Navigator.pushReplacementNamed(context, AppRoutes.login);
-    });
+    }
   }
 
   @override

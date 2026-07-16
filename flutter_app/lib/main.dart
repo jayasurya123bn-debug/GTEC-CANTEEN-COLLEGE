@@ -52,9 +52,9 @@ class GtecCanteenApp extends StatelessWidget {
     return MaterialApp(
       title: 'GTEC Pure Veg Canteen',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       initialRoute: AppRoutes.splash,
       onGenerateRoute: AppRoutes.generateRoute,
     );

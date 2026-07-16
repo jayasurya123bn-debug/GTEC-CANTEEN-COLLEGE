@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [canteenStatus, setCanteenStatus] = useState<CanteenStatus>({ is_open: false, busyness: 'low', broadcast_message: '' });
   const [broadcastInput, setBroadcastInput] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -77,12 +78,20 @@ export default function Dashboard() {
   };
 
   const handleSendBroadcast = async () => {
+    if (!broadcastInput.trim()) {
+      toast.error('Please enter a message');
+      return;
+    }
+    setIsBroadcasting(true);
     try {
       await api.put('/canteen/broadcast', { broadcast_message: broadcastInput });
       toast.success('Broadcast sent!');
+      setCanteenStatus(prev => ({ ...prev, broadcast_message: broadcastInput }));
       setBroadcastInput('');
     } catch (error) {
       toast.error('Failed to send broadcast');
+    } finally {
+      setIsBroadcasting(false);
     }
   };
 
@@ -125,6 +134,26 @@ export default function Dashboard() {
           </div>
           <div className="p-6">
             <p className="text-sm text-gray-400 mb-4">Send a push notification and update the banner in the app for all students.</p>
+            {canteenStatus.broadcast_message && (
+              <div className="mb-4 p-3 rounded bg-elevated border border-border">
+                <span className="text-xs text-primary font-bold uppercase tracking-wider block mb-1">Current Active Broadcast</span>
+                <p className="text-white text-sm">{canteenStatus.broadcast_message}</p>
+                <button 
+                  onClick={async () => {
+                    try {
+                      await api.put('/canteen/broadcast', { broadcast_message: '' });
+                      setCanteenStatus(prev => ({...prev, broadcast_message: ''}));
+                      toast.success('Broadcast cleared');
+                    } catch (error) {
+                      toast.error('Failed to clear broadcast');
+                    }
+                  }}
+                  className="mt-2 text-xs text-red-500 hover:text-red-400 font-medium"
+                >
+                  Clear Message
+                </button>
+              </div>
+            )}
             <textarea
               className="w-full border border-border bg-background text-white rounded-lg p-3 text-sm focus:ring-primary focus:border-primary placeholder-gray-500"
               rows={4}
@@ -134,11 +163,16 @@ export default function Dashboard() {
             ></textarea>
             <button 
               onClick={handleSendBroadcast}
-              className="mt-4 w-full md:w-auto flex justify-center items-center px-6 py-3 rounded-xl font-bold text-[#0D1117] bg-primary hover:bg-[#00C853] transition-colors"
+              disabled={isBroadcasting}
+              className="mt-4 w-full md:w-auto flex justify-center items-center px-6 py-3 rounded-xl font-bold text-[#0D1117] bg-primary hover:bg-[#00C853] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ boxShadow: "0 0 20px rgba(0,230,118,0.3)" }}
             >
-              <Send size={18} className="mr-2" />
-              Broadcast Now
+              {isBroadcasting ? (
+                <div className="w-5 h-5 border-2 border-[#0D1117] border-t-transparent rounded-full animate-spin mr-2"></div>
+              ) : (
+                <Send size={18} className="mr-2" />
+              )}
+              {isBroadcasting ? 'Broadcasting...' : 'Broadcast Now'}
             </button>
           </div>
         </div>
