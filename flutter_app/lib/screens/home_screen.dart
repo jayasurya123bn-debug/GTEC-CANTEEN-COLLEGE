@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -93,8 +94,61 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _HomeBody extends StatelessWidget {
+class _HomeBody extends StatefulWidget {
   const _HomeBody();
+
+  @override
+  State<_HomeBody> createState() => _HomeBodyState();
+}
+
+class _HomeBodyState extends State<_HomeBody> {
+  final PageController _bannerCtrl = PageController();
+  int _currentBanner = 0;
+  Timer? _bannerTimer;
+
+  static const List<Map<String, String>> _bannerSlides = [
+    {
+      'image': 'http://www.gtec.ac.in/images/college/1.jpg',
+      'title': 'Ganadipathy Tulsi Engineering College',
+      'sub': '🌿 Pure Veg Campus Canteen',
+    },
+    {
+      'image': 'http://www.gtec.ac.in/images/college/2.jpg',
+      'title': 'GTEC Pure Veg Canteen',
+      'sub': '🍽️ Fresh & Healthy Every Day',
+    },
+    {
+      'image': 'http://www.gtec.ac.in/images/college/3.jpg',
+      'title': 'Vellore - Chennai Road Campus',
+      'sub': '🌿 100% Vegetarian Meals',
+    },
+    {
+      'image': 'http://www.gtec.ac.in/images/college/4.jpg',
+      'title': 'Tiruvannamalai, Tamil Nadu',
+      'sub': '⭐ Quality You Can Trust',
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (!mounted) return;
+      final next = (_currentBanner + 1) % _bannerSlides.length;
+      _bannerCtrl.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _bannerTimer?.cancel();
+    _bannerCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,67 +261,100 @@ class _HomeBody extends StatelessWidget {
         // ── Broadcast banner ─────────────────────────────────────────────────
         const SliverToBoxAdapter(child: NowServingBanner()),
 
-        // ── Hero Campus Banner ───────────────────────────────────────────────
+        // ── Hero Campus Banner Carousel (4 slides) ──────────────────────────
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: SizedBox(
-                height: 160,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: AppConstants.bannerUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(color: AppTheme.elevated),
-                      errorWidget: (_, __, ___) => Container(
-                        color: AppTheme.elevated,
-                        child: const Center(
-                          child: Icon(Icons.school_rounded,
-                              color: AppTheme.primaryGreen, size: 60),
-                        ),
-                      ),
-                    ),
-                    // Gradient overlay
-                    Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.transparent, Color(0xCC0D1117)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 16,
-                      left: 16,
-                      right: 16,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppConstants.fullName,
-                            style: GoogleFonts.poppins(
-                              color: AppTheme.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: SizedBox(
+                    height: 180,
+                    child: PageView.builder(
+                      controller: _bannerCtrl,
+                      itemCount: _bannerSlides.length,
+                      onPageChanged: (i) => setState(() => _currentBanner = i),
+                      itemBuilder: (context, index) {
+                        final slide = _bannerSlides[index];
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: slide['image']!,
+                              fit: BoxFit.cover,
+                              placeholder: (_, __) => Container(color: AppTheme.elevated),
+                              errorWidget: (_, __, ___) => Container(
+                                color: AppTheme.elevated,
+                                child: const Center(
+                                  child: Icon(Icons.school_rounded,
+                                      color: AppTheme.primaryGreen, size: 60),
+                                ),
+                              ),
                             ),
-                          ),
-                          const Text(
-                            '🌿 Pure Veg Campus Canteen',
-                            style: TextStyle(
-                              color: AppTheme.primaryGreen,
-                              fontSize: 11,
+                            Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Colors.transparent, Color(0xDD0D1117)],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  stops: [0.4, 1.0],
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                            Positioned(
+                              bottom: 16,
+                              left: 16,
+                              right: 16,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    slide['title']!,
+                                    style: GoogleFonts.poppins(
+                                      color: AppTheme.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    slide['sub']!,
+                                    style: const TextStyle(
+                                      color: AppTheme.primaryGreen,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 10),
+                // Dot indicators
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(_bannerSlides.length, (i) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentBanner == i ? 20 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: _currentBanner == i
+                            ? AppTheme.primaryGreen
+                            : AppTheme.muted,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
           ),
         ),
