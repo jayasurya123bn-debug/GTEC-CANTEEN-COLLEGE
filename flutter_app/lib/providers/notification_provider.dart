@@ -9,6 +9,7 @@ import '../config/api_config.dart';
 class NotificationProvider with ChangeNotifier {
   List<NotificationModel> _notifications = [];
   bool _isLoading = false;
+  bool _isUpdateRead = false;
   StreamSubscription? _menuSub;
 
   List<NotificationModel> get notifications => _notifications;
@@ -52,6 +53,15 @@ class NotificationProvider with ChangeNotifier {
       final res = await ApiService.client.get(ApiConfig.notifications);
       List<dynamic> data = res.data['notifications'];
       _notifications = data.map((j) => NotificationModel.fromJson(j)).toList();
+
+      _notifications.insert(0, NotificationModel(
+        id: 'update_apk',
+        title: 'App Update Available! 🚀',
+        body: 'Click here to download the latest flutter apk update now.',
+        type: 'update_apk',
+        isRead: _isUpdateRead,
+        createdAt: DateTime.now(),
+      ));
     } catch (e) {
       print('Error fetching notifications: $e');
     }
@@ -60,6 +70,23 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> markAsRead(String id) async {
+    if (id == 'update_apk') {
+      _isUpdateRead = true;
+      final idx = _notifications.indexWhere((n) => n.id == id);
+      if (idx != -1) {
+        _notifications[idx] = NotificationModel(
+          id: _notifications[idx].id,
+          title: _notifications[idx].title,
+          body: _notifications[idx].body,
+          type: _notifications[idx].type,
+          isRead: true,
+          createdAt: _notifications[idx].createdAt,
+        );
+        notifyListeners();
+      }
+      return;
+    }
+
     final idx = _notifications.indexWhere((n) => n.id == id);
     if (idx != -1) {
       _notifications[idx] = NotificationModel(
@@ -75,6 +102,7 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future<void> markAllAsRead() async {
+    _isUpdateRead = true;
     for (int i = 0; i < _notifications.length; i++) {
       _notifications[i] = NotificationModel(
         id: _notifications[i].id,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/notification_provider.dart';
 import '../config/theme.dart';
 
@@ -69,9 +70,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       fontSize: 12,
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     if (!notification.isRead) {
                       provider.markAsRead(notification.id);
+                    }
+                    if (notification.type == 'update_apk') {
+                      final url = Uri.parse('https://gtec-canteen-college.vercel.app/download');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
                     }
                   },
                 );
