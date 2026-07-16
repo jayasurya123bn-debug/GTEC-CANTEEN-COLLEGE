@@ -31,7 +31,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
           }
 
           if (provider.orders.isEmpty) {
-            return const Center(child: Text('No orders yet.'));
+            return RefreshIndicator(
+              onRefresh: () => provider.fetchOrders(),
+              color: AppTheme.primaryGreen,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    child: const Center(child: Text('No orders yet.')),
+                  ),
+                ],
+              ),
+            );
           }
 
           return RefreshIndicator(

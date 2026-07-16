@@ -44,15 +44,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           }
 
           if (provider.notifications.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('🔔', style: TextStyle(fontSize: 48)),
-                  SizedBox(height: 12),
-                  Text('No notifications', style: TextStyle(color: AppTheme.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 6),
-                  Text('You\'re all caught up!', style: TextStyle(color: AppTheme.bodyText, fontSize: 14)),
+            return RefreshIndicator(
+              onRefresh: () => provider.fetchNotifications(),
+              color: AppTheme.primaryGreen,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text('🔔', style: TextStyle(fontSize: 48)),
+                          SizedBox(height: 12),
+                          Text('No notifications', style: TextStyle(color: AppTheme.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 6),
+                          Text('You\'re all caught up!', style: TextStyle(color: AppTheme.bodyText, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );

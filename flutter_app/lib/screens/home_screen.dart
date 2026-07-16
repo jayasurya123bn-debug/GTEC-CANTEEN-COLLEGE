@@ -154,9 +154,17 @@ class _HomeBodyState extends State<_HomeBody> {
   Widget build(BuildContext context) {
     final user = Provider.of<AuthProvider>(context).user;
 
-    return CustomScrollView(
-      slivers: [
-        // ── Frosted glass AppBar ─────────────────────────────────────────────
+    return RefreshIndicator(
+      color: AppTheme.primaryGreen,
+      onRefresh: () async {
+        await Provider.of<CanteenStatusProvider>(context, listen: false).fetchStatus();
+        await Provider.of<MenuProvider>(context, listen: false).fetchMenu();
+        await Provider.of<FavouriteProvider>(context, listen: false).fetchFavourites();
+      },
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          // ── Frosted glass AppBar ─────────────────────────────────────────────
         SliverAppBar(
           pinned: true,
           backgroundColor: AppTheme.background.withOpacity(0.85),
@@ -439,7 +447,8 @@ class _HomeBodyState extends State<_HomeBody> {
             );
           },
         ),
-      ],
+        ],
+      ),
     );
   }
 }
