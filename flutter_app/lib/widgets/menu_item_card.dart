@@ -69,6 +69,22 @@ class MenuItemCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, size: 14, color: Colors.amber),
+                        const SizedBox(width: 4),
+                        Text(
+                          item.avgRating > 0 ? item.avgRating.toStringAsFixed(1) : 'New',
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '(${item.ratingCount} Reviews)',
+                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
