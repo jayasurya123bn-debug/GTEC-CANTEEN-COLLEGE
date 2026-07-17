@@ -61,7 +61,7 @@ export const refresh = async (req, res, next) => {
       }
       
       // Generate new access token
-      const accessToken = jwt.sign({ id: decoded.id, role: decoded.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
+      const accessToken = jwt.sign({ id: decoded.id, role: decoded.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
       res.status(200).json({ accessToken });
     });
   } catch (error) {

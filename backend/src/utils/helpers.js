@@ -20,11 +20,11 @@ export const generateTokens = (user) => {
   };
 
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET || 'fallback_super_secret_key_123', {
-    expiresIn: '15m',
+    expiresIn: '7d',
   });
 
   const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET || 'fallback_super_refresh_key_123', {
-    expiresIn: '7d',
+    expiresIn: '30d',
   });
 
   return { accessToken, refreshToken };

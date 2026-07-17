@@ -1,5 +1,3 @@
-import { createAdapter } from '@socket.io/redis-adapter';
-import redisClient from '../config/redis.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import logger from '../utils/logger.js';
@@ -10,7 +8,6 @@ let ioInstance;
 
 export const setupSocket = (io) => {
   ioInstance = io;
-  // io.adapter(createAdapter(redisClient, subClient)); // Disabled for local run without Redis
 
   // Authentication Middleware
   io.use((socket, next) => {

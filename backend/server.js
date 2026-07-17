@@ -44,7 +44,7 @@ const io = new Server(server, {
   }
 });
 
-// Setup Socket.IO with Redis and Events
+// Setup Socket.IO and Events
 setupSocket(io);
 
 // Health Check
