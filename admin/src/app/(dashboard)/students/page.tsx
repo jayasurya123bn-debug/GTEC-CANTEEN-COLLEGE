@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useStudents } from '@/hooks/useStudents';
-import { Search, Users, User, ArrowUpRight, GraduationCap, Building2, Trash2 } from 'lucide-react';
+import { Search, Users, User, ArrowUpRight, GraduationCap, Building2, Trash2, X } from 'lucide-react';
 
 export default function StudentsPage() {
   const [filters, setFilters] = useState({
@@ -11,12 +11,13 @@ export default function StudentsPage() {
     year: 'All',
     section: 'All'
   });
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
 
   const { students, isLoading, error, stats, deleteStudent } = useStudents(filters);
 
-  const departments = ['All', 'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS', 'BME', 'CHEM'];
+  const departments = ['All', 'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS'];
   const years = ['All', '1st Year', '2nd Year', '3rd Year', '4th Year'];
-  const sections = ['All', 'A', 'B', 'C', 'D'];
+  const sections = ['All', 'A', 'B', 'C', 'D', 'E', 'F'];
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -157,7 +158,10 @@ export default function StudentsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-green-400 hover:text-green-300 text-sm font-medium transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+                      <button 
+                        onClick={() => setSelectedStudent(student)}
+                        className="text-green-400 hover:text-green-300 text-sm font-medium transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                      >
                         View
                       </button>
                       <button 
@@ -175,6 +179,58 @@ export default function StudentsPage() {
           </table>
         </div>
       </div>
+
+      {/* Student Details Modal */}
+      {selectedStudent && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="flex justify-between items-center p-6 border-b border-gray-800">
+              <h2 className="text-xl font-bold text-white">Student Profile</h2>
+              <button onClick={() => setSelectedStudent(null)} className="text-gray-400 hover:text-white transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center border border-green-500/20">
+                  <User className="w-8 h-8 text-green-500" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">{selectedStudent.name}</h3>
+                  <p className="text-gray-400 text-sm">{selectedStudent.email}</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700/50">
+                  <p className="text-gray-500 text-xs font-medium uppercase mb-1">Department</p>
+                  <p className="text-white font-semibold">{selectedStudent.department}</p>
+                </div>
+                <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700/50">
+                  <p className="text-gray-500 text-xs font-medium uppercase mb-1">Year</p>
+                  <p className="text-white font-semibold">{selectedStudent.year}</p>
+                </div>
+                <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700/50">
+                  <p className="text-gray-500 text-xs font-medium uppercase mb-1">Section</p>
+                  <p className="text-white font-semibold">{selectedStudent.section}</p>
+                </div>
+                <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700/50">
+                  <p className="text-gray-500 text-xs font-medium uppercase mb-1">Registered On</p>
+                  <p className="text-white font-semibold">{formatDate(selectedStudent.registeredOn || new Date().toISOString())}</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-800 flex justify-end">
+              <button 
+                onClick={() => setSelectedStudent(null)}
+                className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

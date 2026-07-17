@@ -7,7 +7,7 @@ export const registerSchema = Joi.object({
   }),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
-  department: Joi.string().valid('CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS', 'BME', 'CHEM').required().messages({
+  department: Joi.string().valid('CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS').required().messages({
     'any.only': 'Select a valid department',
     'string.empty': 'Department is required'
   }),
@@ -15,7 +15,7 @@ export const registerSchema = Joi.object({
     'any.only': 'Select a valid year',
     'string.empty': 'Year is required'
   }),
-  section: Joi.string().valid('A', 'B', 'C', 'D').required().messages({
+  section: Joi.string().valid('A', 'B', 'C', 'D', 'E', 'F').required().messages({
     'any.only': 'Select a valid section',
     'string.empty': 'Section is required'
   })

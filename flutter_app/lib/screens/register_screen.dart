@@ -23,9 +23,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedYear;
   String? _selectedSection;
 
-  final List<String> _departments = ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS', 'BME', 'CHEM'];
+  final List<String> _departments = ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS'];
   final List<String> _years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
-  final List<String> _sections = ['A', 'B', 'C', 'D'];
+  final List<String> _sections = ['A', 'B', 'C', 'D', 'E', 'F'];
 
   bool get _isFormValid {
     return _nameController.text.isNotEmpty &&
