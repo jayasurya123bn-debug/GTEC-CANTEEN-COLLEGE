@@ -73,6 +73,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             onRefresh: () => provider.fetchNotifications(),
             color: AppTheme.primaryGreen,
             child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
               itemCount: provider.notifications.length,
               separatorBuilder: (context, index) => const SizedBox(height: 10),

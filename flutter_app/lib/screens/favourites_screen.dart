@@ -37,54 +37,67 @@ class FavouritesScreen extends StatelessWidget {
               .where((item) => favProvider.isFavourite(item.id))
               .toList();
 
-          if (favItems.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(40),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('🌿', style: TextStyle(fontSize: 64)),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No favourites yet',
-                      style: GoogleFonts.poppins(
-                        color: AppTheme.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Tap the heart on dishes you love\nto save them here.',
-                      style: TextStyle(
-                        color: AppTheme.bodyText,
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          return GridView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 220,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.72,
-            ),
-            itemCount: favItems.length,
-            itemBuilder: (context, index) {
-              return MenuItemCard(
-                item: favItems[index],
-                animationIndex: index,
-              );
+          return RefreshIndicator(
+            color: AppTheme.primaryGreen,
+            onRefresh: () async {
+              await Provider.of<MenuProvider>(context, listen: false).fetchMenu();
+              await Provider.of<FavouriteProvider>(context, listen: false).fetchFavourites();
             },
+            child: favItems.isEmpty
+                ? CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(40),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('🌿', style: TextStyle(fontSize: 64)),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No favourites yet',
+                                  style: GoogleFonts.poppins(
+                                    color: AppTheme.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Tap the heart on dishes you love\nto save them here.',
+                                  style: TextStyle(
+                                    color: AppTheme.bodyText,
+                                    fontSize: 14,
+                                    height: 1.5,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : GridView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 220,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.72,
+                    ),
+                    itemCount: favItems.length,
+                    itemBuilder: (context, index) {
+                      return MenuItemCard(
+                        item: favItems[index],
+                        animationIndex: index,
+                      );
+                    },
+                  ),
           );
         },
       ),

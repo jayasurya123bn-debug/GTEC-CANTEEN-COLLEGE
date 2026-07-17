@@ -141,17 +141,28 @@ class _MyTokensScreenState extends State<MyTokensScreen>
   Widget _buildTokenList(int tab) {
     final filtered = _filterByTab(tab);
     if (filtered.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.confirmation_number_outlined, size: 48, color: Colors.grey[300]),
-            const SizedBox(height: 12),
-            Text(
-              tab == 0 ? 'No active pre-orders'
-              : tab == 1 ? 'No completed orders yet'
-              : 'No cancelled orders',
-              style: TextStyle(color: Colors.grey[500]),
+      return RefreshIndicator(
+        onRefresh: _loadTokens,
+        color: AppTheme.primaryGreen,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.confirmation_number_outlined, size: 48, color: Colors.grey[300]),
+                    const SizedBox(height: 12),
+                    Text(
+                      tab == 0 ? 'No active pre-orders'
+                      : tab == 1 ? 'No completed orders yet'
+                      : 'No cancelled orders',
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -162,6 +173,7 @@ class _MyTokensScreenState extends State<MyTokensScreen>
       onRefresh: _loadTokens,
       color: AppTheme.primaryGreen,
       child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
         itemCount: filtered.length,
         itemBuilder: (context, index) {

@@ -46,8 +46,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
           }
 
           return RefreshIndicator(
+            color: AppTheme.primaryGreen,
             onRefresh: () => provider.fetchOrders(),
             child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
               itemCount: provider.orders.length,
               itemBuilder: (context, index) {
