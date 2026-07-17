@@ -70,14 +70,14 @@ export default function StudentsPage() {
           <div className="text-3xl font-bold text-white">{stats.firstYearCount}</div>
         </div>
 
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800 border-l-4 border-l-purple-500">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-400 font-medium">Active Today</h3>
-            <div className="p-2 bg-green-500/10 rounded-lg">
-              <ArrowUpRight className="w-5 h-5 text-green-500" />
+            <h3 className="text-gray-400 font-medium">IT Students</h3>
+            <div className="p-2 bg-purple-500/10 rounded-lg">
+              <Building2 className="w-5 h-5 text-purple-500" />
             </div>
           </div>
-          <div className="text-3xl font-bold text-green-500">{stats.activeToday}</div>
+          <div className="text-3xl font-bold text-white">{stats.itCount}</div>
         </div>
       </div>
 
