@@ -15,17 +15,33 @@ import bcrypt from 'bcryptjs';
 
 const app = express();
 
-// Automatically create the default admin account on server start
-bcrypt.genSalt(12).then(salt => bcrypt.hash('admin123', salt)).then(hashed => {
-  return query(
-    `INSERT INTO users (name, email, password_hash, phone, role) 
-     VALUES ('admin', 'admin@admin.com', $1, '0000000000', 'admin') 
-     ON CONFLICT (email) DO UPDATE SET password_hash = $1, role = 'admin'`, 
-    [hashed]
-  );
-})
-.then(() => logger.info('✅ Created default admin account (email: admin, password: admin123)'))
-.catch(err => logger.error('Failed to create admin:', err));
+// Automatically run migrations and create the default admin account on server start
+const runMigrations = async () => {
+  try {
+    await query(`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS department VARCHAR(50),
+      ADD COLUMN IF NOT EXISTS year VARCHAR(20),
+      ADD COLUMN IF NOT EXISTS section VARCHAR(10);
+    `);
+    logger.info('✅ Database migrations successful');
+  } catch (err) {
+    logger.error('Database migration failed:', err);
+  }
+};
+
+runMigrations().then(() => {
+  bcrypt.genSalt(12).then(salt => bcrypt.hash('admin123', salt)).then(hashed => {
+    return query(
+      `INSERT INTO users (name, email, password_hash, phone, role) 
+       VALUES ('admin', 'admin@admin.com', $1, '0000000000', 'admin') 
+       ON CONFLICT (email) DO UPDATE SET password_hash = $1, role = 'admin'`, 
+      [hashed]
+    );
+  })
+  .then(() => logger.info('✅ Created default admin account (email: admin, password: admin123)'))
+  .catch(err => logger.error('Failed to create admin:', err));
+});
 const server = http.createServer(app);
 
 // Security Middlewares
