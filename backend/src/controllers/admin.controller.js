@@ -70,3 +70,14 @@ export const getStudents = async (req, res, next) => {
   }
 };
 
+export const deleteStudent = async (req, res, next) => {
+  try {
+    const { deleteUserById } = await import('../models/user.model.js');
+    await deleteUserById(req.params.id);
+    res.status(200).json({ message: 'Student deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+

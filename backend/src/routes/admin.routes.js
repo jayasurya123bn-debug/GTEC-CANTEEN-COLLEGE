@@ -1,5 +1,5 @@
 import express from 'express';
-import { getStats, getRecentOrdersList, listAllOrders, updateStatus, getStudents } from '../controllers/admin.controller.js';
+import { getStats, getRecentOrdersList, listAllOrders, updateStatus, getStudents, deleteStudent } from '../controllers/admin.controller.js';
 import { validateRequest } from '../middleware/validation.js';
 import { authenticateToken, requireRole } from '../middleware/auth.js';
 import { updateOrderStatusSchema } from '../validators/order.validator.js';
@@ -13,5 +13,6 @@ router.get('/stats/recent-orders', getRecentOrdersList);
 router.get('/orders', listAllOrders);
 router.patch('/orders/:id/status', validateRequest(updateOrderStatusSchema), updateStatus);
 router.get('/students', getStudents);
+router.delete('/students/:id', deleteStudent);
 
 export default router;

@@ -42,3 +42,8 @@ export const getAllStudents = async () => {
   );
   return result.rows;
 };
+
+export const deleteUserById = async (id) => {
+  await query('DELETE FROM users WHERE id = $1', [id]);
+};
+

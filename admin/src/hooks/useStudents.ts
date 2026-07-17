@@ -60,9 +60,23 @@ export const useStudents = (filters: UseStudentsFilters) => {
     }
   }, [filters]);
 
+  const deleteStudent = async (id: string) => {
+    try {
+      const response = await api.delete(`/admin/students/${id}`);
+      if (response.status === 200) {
+        fetchStudents();
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Failed to delete student:', err);
+      return false;
+    }
+  };
+
   useEffect(() => {
     fetchStudents();
   }, [fetchStudents]);
 
-  return { students, isLoading, error, stats, refetch: fetchStudents };
+  return { students, isLoading, error, stats, refetch: fetchStudents, deleteStudent };
 };

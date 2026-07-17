@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useStudents } from '@/hooks/useStudents';
-import { Search, Users, User, ArrowUpRight, GraduationCap, Building2 } from 'lucide-react';
+import { Search, Users, User, ArrowUpRight, GraduationCap, Building2, Trash2 } from 'lucide-react';
 
 export default function StudentsPage() {
   const [filters, setFilters] = useState({
@@ -12,7 +12,7 @@ export default function StudentsPage() {
     section: 'All'
   });
 
-  const { students, isLoading, error, stats } = useStudents(filters);
+  const { students, isLoading, error, stats, deleteStudent } = useStudents(filters);
 
   const departments = ['All', 'CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS', 'BME', 'CHEM'];
   const years = ['All', '1st Year', '2nd Year', '3rd Year', '4th Year'];
@@ -20,6 +20,15 @@ export default function StudentsPage() {
 
   const handleFilterChange = (key: keyof typeof filters, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete student ${name}? This action cannot be undone.`)) {
+      const success = await deleteStudent(id);
+      if (!success) {
+        alert('Failed to delete student. Please try again.');
+      }
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -192,6 +201,13 @@ export default function StudentsPage() {
                     <td className="px-6 py-4 text-right">
                       <button className="text-green-400 hover:text-green-300 text-sm font-medium transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
                         View
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(student.id, student.name)}
+                        className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-400/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 ml-2"
+                        title="Delete Student"
+                      >
+                        <Trash2 className="w-4 h-4 inline-block" />
                       </button>
                     </td>
                   </tr>
