@@ -47,48 +47,6 @@ export default function StudentsPage() {
         <p className="text-gray-500 mt-1">View registered students by department and section</p>
       </div>
 
-      {/* Stats Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-400 font-medium">Total Students</h3>
-            <div className="p-2 bg-gray-800/50 rounded-lg">
-              <Users className="w-5 h-5 text-gray-400" />
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-white">{stats.total}</div>
-        </div>
-        
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800 border-l-4 border-l-green-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-400 font-medium">CSE Students</h3>
-            <div className="p-2 bg-green-500/10 rounded-lg">
-              <Building2 className="w-5 h-5 text-green-500" />
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-white">{stats.cseCount}</div>
-        </div>
-
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800 border-l-4 border-l-blue-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-400 font-medium">1st Year Students</h3>
-            <div className="p-2 bg-blue-500/10 rounded-lg">
-              <GraduationCap className="w-5 h-5 text-blue-500" />
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-white">{stats.firstYearCount}</div>
-        </div>
-
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800 border-l-4 border-l-purple-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-400 font-medium">IT Students</h3>
-            <div className="p-2 bg-purple-500/10 rounded-lg">
-              <Building2 className="w-5 h-5 text-purple-500" />
-            </div>
-          </div>
-          <div className="text-3xl font-bold text-white">{stats.itCount}</div>
-        </div>
-      </div>
 
       {/* Filters Row */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
