@@ -22,6 +22,13 @@ class AuthService {
     return res.data;
   }
 
+  static Future<void> updateProfile(String name, String phone) async {
+    await ApiService.client.put(ApiConfig.profile, data: {
+      'name': name,
+      'phone': phone,
+    });
+  }
+
   static Future<void> saveTokens(String accessToken, String refreshToken) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', accessToken);

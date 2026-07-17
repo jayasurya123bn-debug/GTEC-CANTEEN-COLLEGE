@@ -6,6 +6,7 @@ import '../providers/auth_provider.dart';
 import '../config/theme.dart';
 import '../config/constants.dart';
 import '../utils/routes.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -84,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
             _SettingsTile(
               icon: Icons.edit_outlined,
               label: 'Edit Profile',
-              onTap: () {},
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen())),
             ),
             const SizedBox(height: 10),
             _SettingsTile(

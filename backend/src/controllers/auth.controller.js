@@ -1,5 +1,8 @@
 import { createUser, findUserByEmail, findUserById, updateFcmToken, updateProfile } from '../models/user.model.js';
 import { hashPassword, verifyPassword, generateTokens } from '../utils/helpers.js';
+import { query } from '../config/database.js';
+import { registerSchema } from '../validators/auth.validator.js';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
@@ -7,17 +10,53 @@ dotenv.config();
 
 export const register = async (req, res, next) => {
   try {
-    const { name, email, password, phone } = req.body;
-    
-    const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
+    // 1. Validate with registerSchema
+    const { error, value } = registerSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errorMessage = error.details.map((detail) => detail.message).join(', ');
+      return res.status(400).json({ success: false, message: errorMessage });
     }
 
-    const hashed = await hashPassword(password);
-    const user = await createUser(name, email, hashed, phone);
-    
-    res.status(201).json({ message: 'User registered successfully', user });
+    const { name, email, password, department, year, section } = value;
+
+    // 2. Check if email exists
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: 'Email already exists' });
+    }
+
+    // 3. Hash password with bcryptjs (saltRounds: 12)
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // 4. Insert into users table with role: 'student', including department, year, and section
+    const result = await query(
+      `INSERT INTO users (name, email, password_hash, department, year, section, role)
+       VALUES ($1, $2, $3, $4, $5, $6, 'student')
+       RETURNING id, name, email, department, year, section, role`,
+      [name, email, hashedPassword, department, year, section]
+    );
+    const newUser = result.rows[0];
+
+    // 5. Generate access and refresh tokens
+    const { accessToken, refreshToken } = generateTokens(newUser);
+
+    // 6. Return response
+    return res.status(201).json({
+      success: true,
+      message: 'Registration successful',
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        department: newUser.department,
+        year: newUser.year,
+        section: newUser.section,
+        role: newUser.role,
+      },
+      accessToken,
+      refreshToken,
+    });
   } catch (error) {
     next(error);
   }

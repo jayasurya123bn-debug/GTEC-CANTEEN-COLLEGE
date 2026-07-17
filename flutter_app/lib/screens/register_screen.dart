@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:dio/dio.dart';
-import '../providers/auth_provider.dart';
-import '../utils/validators.dart';
-import '../utils/routes.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,242 +9,370 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _name = '';
-  String _email = '';
-  String _password = '';
-  String _phone = '';
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  
+  bool _obscurePassword = true;
   bool _isLoading = false;
-  bool _obscurePass = true;
 
-  Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState!.save();
-    
-    setState(() => _isLoading = true);
-    
-    try {
-      await Provider.of<AuthProvider>(context, listen: false).register(_name, _email, _password, _phone);
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-      }
-    } catch (e) {
-      if (mounted) {
-        String errorMsg = e.toString();
-        if (e is DioException && e.response?.data != null) {
-          errorMsg = e.response?.data['error'] ?? 'Registration failed';
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMsg),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+  String? _selectedDepartment;
+  String? _selectedYear;
+  String? _selectedSection;
+
+  final List<String> _departments = ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'AI&DS', 'BME', 'CHEM'];
+  final List<String> _years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+  final List<String> _sections = ['A', 'B', 'C', 'D'];
+
+  bool get _isFormValid {
+    return _nameController.text.isNotEmpty &&
+           _emailController.text.isNotEmpty &&
+           _passwordController.text.isNotEmpty &&
+           _selectedDepartment != null &&
+           _selectedYear != null &&
+           _selectedSection != null;
+  }
+
+  void _register() async {
+    if (_formKey.currentState!.validate() && _isFormValid) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // TODO: Replace with your actual API call logic
+      await Future.delayed(const Duration(seconds: 2));
+
+      setState(() {
+        _isLoading = false;
+      });
     }
+  }
+
+  InputDecoration _buildInputDecoration({required String hintText, required IconData prefixIcon, Widget? suffixIcon}) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Color(0xFF8B949E)),
+      prefixIcon: Icon(prefixIcon, color: const Color(0xFF484F58)),
+      suffixIcon: suffixIcon,
+      filled: true,
+      fillColor: const Color(0xFF21262D),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Color(0xFF00E676), width: 1.5),
+      ),
+      errorStyle: const TextStyle(color: Color(0xFFFF5252), fontSize: 12),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Color(0xFFFF5252), width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Color(0xFFFF5252), width: 1.5),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color(0xFF0D1117),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          'Create Account',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ── Top food hero image ──────────────────────────────────────────
-            SizedBox(
-              height: screenHeight * 0.30,
+            // Top Decorative Section
+            Container(
+              height: 100 + MediaQuery.of(context).padding.top,
               width: double.infinity,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1C2333),
+                    Color(0xFF0D1117),
+                  ],
+                ),
+              ),
               child: Stack(
-                fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=500&fit=crop',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: Theme.of(context).cardColor,
-                      child: const Center(
-                        child: Text('🥗', style: TextStyle(fontSize: 60)),
-                      ),
-                    ),
-                  ),
-                  // Gradient overlay
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.transparent, Theme.of(context).scaffoldBackgroundColor],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: const [0.4, 1.0],
-                      ),
-                    ),
-                  ),
-                  // Back button
-                  Positioned(
-                    top: 50,
-                    left: 20,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  // Rounded bottom clip
                   Positioned.fill(
-                    top: null,
-                    child: Container(
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+                      // Replace with actual food image if desired
+                      child: Container(
+                         decoration: BoxDecoration(
+                           gradient: LinearGradient(
+                             begin: Alignment.topCenter,
+                             end: Alignment.bottomCenter,
+                             colors: [
+                               const Color(0xFF00E676).withOpacity(0.1),
+                               Colors.transparent,
+                             ]
+                           )
+                         ),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-
-            // ── Form area ───────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.all(24.0),
               child: Form(
                 key: _formKey,
+                onChanged: () {
+                  // Trigger UI update to evaluate _isFormValid for button state
+                  setState(() {}); 
+                },
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      'Create Account ✨',
-                      style: GoogleFonts.poppins(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Sign up to order delicious veg meals',
-                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color, fontSize: 14),
-                    ),
-                    const SizedBox(height: 28),
-
-                    // Name field
                     TextFormField(
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                      decoration: InputDecoration(
+                      controller: _nameController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: _buildInputDecoration(
                         hintText: 'Full Name',
-                        prefixIcon: Icon(Icons.person_outline, color: Theme.of(context).textTheme.bodyMedium?.color),
+                        prefixIcon: Icons.person_outline,
                       ),
-                      validator: (val) => Validators.validateRequired(val, 'Name'),
-                      onSaved: (val) => _name = val!.trim(),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Full name is required';
+                        }
+                        if (value.length < 3) {
+                          return 'Name must be at least 3 characters';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
-
-                    // Email field
                     TextFormField(
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      controller: _emailController,
+                      style: const TextStyle(color: Colors.white),
                       keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        hintText: 'Email address',
-                        prefixIcon: Icon(Icons.email_outlined, color: Theme.of(context).textTheme.bodyMedium?.color),
+                      decoration: _buildInputDecoration(
+                        hintText: 'College Email',
+                        prefixIcon: Icons.email_outlined,
                       ),
-                      validator: Validators.validateEmail,
-                      onSaved: (val) => _email = val!.trim(),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Email is required';
+                        }
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                          return 'Enter a valid email address';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
-
-                    // Phone field
                     TextFormField(
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        hintText: 'Phone Number',
-                        prefixIcon: Icon(Icons.phone_outlined, color: Theme.of(context).textTheme.bodyMedium?.color),
-                      ),
-                      validator: Validators.validatePhone,
-                      onSaved: (val) => _phone = val!.trim(),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Password field
-                    TextFormField(
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                      obscureText: _obscurePass,
-                      validator: Validators.validatePassword,
-                      onSaved: (val) => _password = val!.trim(),
-                      decoration: InputDecoration(
+                      controller: _passwordController,
+                      style: const TextStyle(color: Colors.white),
+                      obscureText: _obscurePassword,
+                      decoration: _buildInputDecoration(
                         hintText: 'Password',
-                        prefixIcon: Icon(Icons.lock_outline, color: Theme.of(context).textTheme.bodyMedium?.color),
+                        prefixIcon: Icons.lock_outline,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePass ? Icons.visibility_off : Icons.visibility,
-                            color: Theme.of(context).textTheme.bodyMedium?.color,
-                            size: 20,
+                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            color: const Color(0xFF8B949E),
                           ),
-                          onPressed: () => setState(() => _obscurePass = !_obscurePass),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password is required';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _selectedDepartment,
+                      style: const TextStyle(color: Colors.white),
+                      dropdownColor: const Color(0xFF1C2333),
+                      icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF8B949E)),
+                      decoration: _buildInputDecoration(
+                        hintText: 'Department',
+                        prefixIcon: Icons.business_center_outlined,
+                      ),
+                      items: _departments.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                              color: _selectedDepartment == value ? const Color(0xFF00E676) : Colors.white,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedDepartment = newValue;
+                        });
+                      },
+                      validator: (value) => value == null ? 'Select a valid department' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _selectedYear,
+                      style: const TextStyle(color: Colors.white),
+                      dropdownColor: const Color(0xFF1C2333),
+                      icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF8B949E)),
+                      decoration: _buildInputDecoration(
+                        hintText: 'Year of Study',
+                        prefixIcon: Icons.calendar_today_outlined,
+                      ),
+                      items: _years.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                              color: _selectedYear == value ? const Color(0xFF00E676) : Colors.white,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedYear = newValue;
+                        });
+                      },
+                      validator: (value) => value == null ? 'Select a valid year' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _selectedSection,
+                      style: const TextStyle(color: Colors.white),
+                      dropdownColor: const Color(0xFF1C2333),
+                      icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF8B949E)),
+                      decoration: _buildInputDecoration(
+                        hintText: 'Section',
+                        prefixIcon: Icons.class_outlined,
+                      ),
+                      items: _sections.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(
+                              color: _selectedSection == value ? const Color(0xFF00E676) : Colors.white,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedSection = newValue;
+                        });
+                      },
+                      validator: (value) => value == null ? 'Select a valid section' : null,
                     ),
                     const SizedBox(height: 32),
-
-                    // Register button with glow
                     Container(
-                      width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(context).primaryColor.withValues(alpha: 0.35),
-                            blurRadius: 20,
-                            offset: const Offset(0, 6),
-                          ),
+                          if (_isFormValid && !_isLoading)
+                            BoxShadow(
+                              color: const Color(0xFF00E676).withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
                         ],
                       ),
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _register,
-                        child: _isLoading
-                            ? SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).scaffoldBackgroundColor,
-                                  strokeWidth: 2.5,
-                                ),
-                              )
-                            : const Text('Register'),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Login button
-                    SizedBox(
-                      width: double.infinity,
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Already have an account? ',
-                            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
-                            children: [
-                              TextSpan(
-                                text: 'Sign In',
-                                style: GoogleFonts.poppins(
-                                  color: Theme.of(context).primaryColor,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
+                        onPressed: (_isFormValid && !_isLoading) ? _register : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00E676),
+                          disabledBackgroundColor: const Color(0xFF00E676).withOpacity(0.3),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0D1117)),
+                                ),
+                              )
+                            : const Text(
+                                'Create Account',
+                                style: TextStyle(
+                                  color: Color(0xFF0D1117),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Already have an account?',
+                          style: TextStyle(color: Color(0xFF8B949E)),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Navigate to Sign In
+                          },
+                          child: const Text(
+                            ' Sign In',
+                            style: TextStyle(
+                              color: Color(0xFF00E676),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),

@@ -1,12 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Utensils, Star, Leaf } from 'lucide-react';
+import { LayoutDashboard, Utensils, Star, Leaf, Users } from 'lucide-react';
 
 const navItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   { name: 'Menu', href: '/menu', icon: Utensils },
   { name: 'Reviews', href: '/reviews', icon: Star },
+  { name: 'Students', href: '/students', icon: Users },
 ];
 
 export default function Sidebar() {

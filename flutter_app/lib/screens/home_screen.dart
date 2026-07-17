@@ -221,6 +221,14 @@ class _HomeBodyState extends State<_HomeBody> {
           ),
           actions: [
             IconButton(
+              icon: const Icon(Icons.refresh_rounded, color: AppTheme.white, size: 26),
+              onPressed: () async {
+                await Provider.of<CanteenStatusProvider>(context, listen: false).fetchStatus();
+                await Provider.of<MenuProvider>(context, listen: false).fetchMenu();
+                await Provider.of<FavouriteProvider>(context, listen: false).fetchFavourites();
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.search_rounded, color: AppTheme.white, size: 26),
               onPressed: () {
                 showSearch(
