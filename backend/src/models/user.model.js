@@ -33,3 +33,12 @@ export const updateProfile = async (userId, name, phone) => {
   );
   return result.rows[0];
 };
+export const getAllStudents = async () => {
+  const result = await query(
+    `SELECT id, name, email, department, year, section, created_at 
+     FROM users 
+     WHERE role = 'student' 
+     ORDER BY created_at DESC`
+  );
+  return result.rows;
+};

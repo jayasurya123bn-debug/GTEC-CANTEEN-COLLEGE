@@ -38,8 +38,9 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> register(String name, String email, String password, String phone) async {
-    await AuthService.register(name, email, password, phone);
+  Future<void> register(
+      String name, String email, String password, String department, String year, String section) async {
+    await AuthService.register(name, email, password, department, year, section);
     // After register, perform login automatically or let user login
     await login(email, password);
   }

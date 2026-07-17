@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+import '../utils/routes.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -39,12 +42,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
 
-      // TODO: Replace with your actual API call logic
-      await Future.delayed(const Duration(seconds: 2));
-
-      setState(() {
-        _isLoading = false;
-      });
+      try {
+        await Provider.of<AuthProvider>(context, listen: false).register(
+          _nameController.text.trim(),
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+          _selectedDepartment!,
+          _selectedYear!,
+          _selectedSection!,
+        );
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, AppRoutes.home);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: const Color(0xFFFF5252),
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 

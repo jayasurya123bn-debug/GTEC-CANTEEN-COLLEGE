@@ -59,3 +59,14 @@ export const updateStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getStudents = async (req, res, next) => {
+  try {
+    const { getAllStudents } = await import('../models/user.model.js');
+    const students = await getAllStudents();
+    res.status(200).json({ students });
+  } catch (error) {
+    next(error);
+  }
+};
+

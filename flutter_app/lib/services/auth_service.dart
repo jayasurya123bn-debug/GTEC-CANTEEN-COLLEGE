@@ -12,12 +12,15 @@ class AuthService {
     return res.data;
   }
 
-  static Future<Map<String, dynamic>> register(String name, String email, String password, String phone) async {
+  static Future<Map<String, dynamic>> register(
+      String name, String email, String password, String department, String year, String section) async {
     final res = await ApiService.client.post(ApiConfig.register, data: {
       'name': name,
       'email': email,
       'password': password,
-      'phone': phone,
+      'department': department,
+      'year': year,
+      'section': section,
     });
     return res.data;
   }
