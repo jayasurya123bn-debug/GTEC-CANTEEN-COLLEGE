@@ -127,8 +127,13 @@ export const getMe = async (req, res, next) => {
 
 export const updateMe = async (req, res, next) => {
   try {
-    const { name, phone } = req.body;
-    const user = await updateProfile(req.user.id, name, phone);
+    const { name, phone, password } = req.body;
+    let passwordHash = null;
+    if (password && password.trim() !== '') {
+      const salt = await bcrypt.genSalt(12);
+      passwordHash = await bcrypt.hash(password, salt);
+    }
+    const user = await updateProfile(req.user.id, name, phone, passwordHash);
     res.status(200).json({ user });
   } catch (error) {
     next(error);

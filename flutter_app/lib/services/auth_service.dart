@@ -25,11 +25,15 @@ class AuthService {
     return res.data;
   }
 
-  static Future<void> updateProfile(String name, String phone) async {
-    await ApiService.client.put(ApiConfig.profile, data: {
+  static Future<void> updateProfile(String name, String phone, [String? password]) async {
+    final Map<String, dynamic> data = {
       'name': name,
       'phone': phone,
-    });
+    };
+    if (password != null && password.isNotEmpty) {
+      data['password'] = password;
+    }
+    await ApiService.client.put(ApiConfig.profile, data: data);
   }
 
   static Future<void> saveTokens(String accessToken, String refreshToken) async {

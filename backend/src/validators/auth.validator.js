@@ -32,7 +32,8 @@ export const refreshSchema = Joi.object({
 
 export const updateProfileSchema = Joi.object({
   name: Joi.string().min(3).max(255).optional(),
-  phone: Joi.string().min(10).max(15).optional(),
+  phone: Joi.string().min(10).max(15).optional().allow(''),
+  password: Joi.string().min(6).optional().allow(''),
 });
 
 export const updateFcmTokenSchema = Joi.object({

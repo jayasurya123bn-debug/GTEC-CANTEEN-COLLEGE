@@ -15,7 +15,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameCtrl;
   late TextEditingController _phoneCtrl;
+  late TextEditingController _passwordCtrl;
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -23,12 +25,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final user = Provider.of<AuthProvider>(context, listen: false).user;
     _nameCtrl = TextEditingController(text: user?.name ?? '');
     _phoneCtrl = TextEditingController(text: user?.phone ?? '');
+    _passwordCtrl = TextEditingController();
   }
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _phoneCtrl.dispose();
+    _passwordCtrl.dispose();
     super.dispose();
   }
 
@@ -37,7 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() => _isLoading = true);
     try {
       await Provider.of<AuthProvider>(context, listen: false)
-          .updateProfile(_nameCtrl.text.trim(), _phoneCtrl.text.trim());
+          .updateProfile(_nameCtrl.text.trim(), _phoneCtrl.text.trim(), _passwordCtrl.text.trim());
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -99,6 +103,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   filled: true,
                   fillColor: AppTheme.card,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordCtrl,
+                obscureText: _obscurePassword,
+                style: const TextStyle(color: AppTheme.white),
+                decoration: InputDecoration(
+                  labelText: 'New Password (Optional)',
+                  labelStyle: const TextStyle(color: AppTheme.muted),
+                  filled: true,
+                  fillColor: AppTheme.card,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: AppTheme.muted),
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  ),
                 ),
               ),
               const SizedBox(height: 32),

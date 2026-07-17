@@ -45,8 +45,8 @@ class AuthProvider with ChangeNotifier {
     await login(email, password);
   }
 
-  Future<void> updateProfile(String name, String phone) async {
-    await AuthService.updateProfile(name, phone);
+  Future<void> updateProfile(String name, String phone, [String? password]) async {
+    await AuthService.updateProfile(name, phone, password);
     await refreshUser();
   }
 

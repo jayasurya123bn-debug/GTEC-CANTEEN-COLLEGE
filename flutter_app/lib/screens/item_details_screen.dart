@@ -132,9 +132,14 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: RefreshIndicator(
+        onRefresh: _fetchReviews,
+        color: AppTheme.primaryGreen,
+        backgroundColor: AppTheme.card,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Hero Image ──────────────────────────────────────────────────
             Stack(
@@ -435,6 +440,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

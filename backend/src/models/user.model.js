@@ -24,12 +24,16 @@ export const updateFcmToken = async (userId, fcmToken) => {
   await query('UPDATE users SET fcm_token = $1 WHERE id = $2', [fcmToken, userId]);
 };
 
-export const updateProfile = async (userId, name, phone) => {
+export const updateProfile = async (userId, name, phone, passwordHash) => {
   const result = await query(
-    `UPDATE users SET name = COALESCE($1, name), phone = COALESCE($2, phone), updated_at = CURRENT_TIMESTAMP
-     WHERE id = $3
+    `UPDATE users 
+     SET name = COALESCE($1, name), 
+         phone = COALESCE($2, phone), 
+         password_hash = COALESCE($3, password_hash),
+         updated_at = CURRENT_TIMESTAMP
+     WHERE id = $4
      RETURNING id, name, email, role, phone, avatar_url`,
-    [name, phone, userId]
+    [name, phone, passwordHash, userId]
   );
   return result.rows[0];
 };

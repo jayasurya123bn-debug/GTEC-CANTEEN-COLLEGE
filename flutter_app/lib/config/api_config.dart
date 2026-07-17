@@ -9,7 +9,7 @@ class ApiConfig {
   static const String logout  = '/auth/logout';
   static const String me      = '/auth/me';
   static const String fcmToken = '/auth/fcm-token';
-  static const String profile = '/auth/profile';
+  static const String profile = '/auth/me';
 
   // Canteen
   static const String canteenStatus = '/canteen/status';
