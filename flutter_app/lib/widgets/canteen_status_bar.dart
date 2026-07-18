@@ -35,6 +35,7 @@ class _CanteenStatusBarState extends State<CanteenStatusBar>
 
   String _busynessLabel(String busyness) {
     switch (busyness.toLowerCase()) {
+      case 'packed': return '🔥 Traffic: Packed';
       case 'high':   return '🔴 Traffic: High';
       case 'moderate': return '🟡 Traffic: Moderate';
       default:       return '🟢 Traffic: Low';
