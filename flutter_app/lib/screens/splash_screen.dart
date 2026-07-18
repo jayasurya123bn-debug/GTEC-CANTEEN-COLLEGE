@@ -42,10 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _initAuthAndNavigate() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     
-    await Future.wait([
-      authProvider.checkAuth(),
-      Future.delayed(const Duration(milliseconds: 2500)),
-    ]);
+    await authProvider.checkAuth();
 
     if (!mounted) return;
 
