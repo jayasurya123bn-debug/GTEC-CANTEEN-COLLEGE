@@ -23,8 +23,11 @@ class CanteenStatusProvider with ChangeNotifier {
 
   void _initSocket() {
     _statusSub = SocketService.canteenStatusStream.listen((data) {
-      _isOpen    = data['is_open'] ?? _isOpen;
-      _busyness  = data['busyness_level'] ?? data['busyness'] ?? _busyness;
+      _isOpen    = data['isOpen'] ?? data['is_open'] ?? _isOpen;
+      _busyness  = data['busyness'] ?? data['busyness_level'] ?? _busyness;
+      if (data.containsKey('broadcastMessage') || data.containsKey('broadcast_message')) {
+        _broadcast = data['broadcastMessage']?.toString() ?? data['broadcast_message']?.toString();
+      }
       notifyListeners();
     });
     _broadcastSub = SocketService.broadcastStream.listen((data) {
